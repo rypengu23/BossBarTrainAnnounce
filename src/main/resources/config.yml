@@ -1,0 +1,28 @@
+# =======================================
+#  BossBarTrainAnnounce
+# =======================================
+# @author     rypengu23
+# @license    LGPLv3
+# @copyright  Copyright ryoengu23 2021
+version: 1.0
+language: "ja"
+# =======================================
+
+# DB接続先情報
+# MySQLのみ対応
+
+database:
+ hostname: "localhost:3306"
+ db: "test"
+ user: "user"
+ password: "password"
+
+# ポジションセット用アイテム
+# アナウンス地点の選択時に使用するアイテムを選択
+select:
+  item: "GOLDEN_AXE"
+
+
+setting:
+ prefix: "BBTA"
+ transferRange: 200

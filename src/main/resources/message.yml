@@ -1,0 +1,102 @@
+###########################################
+# チャットメッセージアナウンスファイル
+version: 1.0
+###########################################
+#
+# 以下の文言がアナウンス時に置き換わります。
+#
+# {LineNameJP}:路線名(日本語)
+# {LineNameEN}:路線名(英語)
+# {ViaLineNameJP}:直通先路線名(日本語)
+# {ViaLineNameJP}:直通先路線名(英語)
+# {TypeJP}:種別名(日本語)
+# {TypeEN}:種別名(英語)
+# {BoundJP}:行き先・方面(日本語)
+# {BoundEN}:行き先・方面(英語)
+# {StationNameJP}：駅名(日本語)
+# {StationNameEN}：駅名(英語)
+# {StationNameKatakana}：駅名(カタカナ)
+# {TransferJP}：乗り換え路線名(日本語)
+# {TransferEN}：乗り換え路線名(英語)
+#
+###########################################
+
+################
+#チャットアナウンス
+################
+chatAnnounce:
+  #路線名・行き先案内
+  trainInformationJPAnnounce: "この電車は{LineNameJP} {TypeJP}、{BoundJP} 行きです。"
+  trainInformationENAnnounce: "This is the {LineNameEN}, {TypeEN} service train for {BoundEN}."
+
+  #路線名・行き先案内(直通)
+  viaTrainInformationJPAnnounce: "この電車は{LineNameJP} {ViaLineNameJP}直通 {TypeJP}、{BoundJP} 行きです。"
+  viaTrainInformationENAnnounce: "This is the {LineNameEN} train {TypeEN} service for {BoundEN}, via the {ViaLineNameEN}."
+
+  #路線名・行き先案内(環状線)
+  loopTrainInformationJPAnnounce: "この電車は{LineNameJP} {TypeJP}、{BoundJP}行きです。"
+  loopTrainInformationENAnnounce: "This is the {LineNameEN} {TypeEN} service train bound for {BoundEN}."
+
+  #次は
+  nextStationJPAnnounce: "次は、{StationNameJP}です。"
+  nextStationENAnnounce: "The next station is {StationNameEN}."
+
+  #次は(終点)
+  nextStationTerminalJPAnnounce: "次は終点、{StationNameJP}です。"
+  nextStationTerminalENAnnounce: "The next station is {StationNameEN} terminal."
+
+  #次は(出口指定あり)
+  nextStationJPAnnounceExit: "次は、{StationNameJP}、{StationNameJP}。"
+  nextStationENAnnounceExit: "The next station is {StationNameEN}."
+
+  #次は(出口指定あり)(終点)
+  nextStationTerminalJPAnnounceExit: "次は終点、{StationNameJP}、{StationNameJP}。"
+  nextStationTerminalENAnnounceExit: "The next station is {StationNameEN} terminal."
+
+  #まもなく
+  soonStationJPAnnounce: "まもなく、{StationNameJP}、{StationNameJP}。"
+  soonStationENAnnounce: "The next station is {StationNameEN}."
+
+  #まもなく(終点)
+  soonStationTerminalJPAnnounce: "まもなく終点、{StationNameJP}、{StationNameJP}。"
+  soonStationTerminalENAnnounce: "The next station is {StationNameEN}　terminal."
+
+  #乗り換え
+  transferJPAnnounce: "{TransferJP}は、お乗り換えです。"
+  transferENAnnounce: "Please change here for {TransferEN}."
+
+  #出口 右側
+  doorRightSideJPAnnounce: "お出口は右側です。"
+  doorRightSideENAnnounce: "The doors on the right side will open."
+
+  #出口 左側
+  doorLeftSideJPAnnounce: "お出口は左側です。"
+  doorLeftSideENAnnounce: "The doors on the left side will open."
+
+
+###########################################
+#
+# 駅内の場合、以下の文言がボスバー表示時に置き換わります。
+#
+# {LineNameJP}:路線名(日本語)
+# {LineNameEN}:路線名(英語)
+# {StationNameJP}：駅名(日本語)
+# {StationNameEN}：駅名(英語)
+# {StationNameKatakana}：駅名(カタカナ)
+# {TransferJP}：乗り換え路線名(日本語)
+# {TransferEN}：乗り換え路線名(英語)
+#
+###########################################
+
+################
+# BossBar表示内容
+################
+bossBar:
+  #次は
+  nextKanji: "次は {StationNameJP}"
+  nextEN: "Next {StationNameEN}"
+  nextKatakana: "次は {StationNameKatakana}"
+
+  #まもなく
+  soonKanji: "まもなく {StationNameJP}"
+  soonEN: "{StationNameEN soon}"

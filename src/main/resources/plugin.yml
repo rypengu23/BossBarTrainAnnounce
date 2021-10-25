@@ -1,0 +1,123 @@
+name: BossBarTrainAnnounce
+version: 1.0
+main: com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce
+api-version: 1.16
+authors: [ rypengu23 ]
+description: トロッコの自動アナウンスプラグイン
+
+commands:
+  bbta:
+
+permissions:
+  bossBarTrainAnnounce.*:
+    description: 全ての権限にアクセス可能
+    children:
+      bossBarTrainAnnounce.select: true
+      bossBarTrainAnnounce.registLine: true
+      bossBarTrainAnnounce.removeLine: true
+      bossBarTrainAnnounce.changeLineName: true
+      bossBarTrainAnnounce.changeLineColor: true
+      bossBarTrainAnnounce.addType: true
+      bossBarTrainAnnounce.removeType: true
+      bossBarTrainAnnounce.registStation: true
+      bossBarTrainAnnounce.removeStation: true
+      bossBarTrainAnnounce.changeStationName: true
+      bossBarTrainAnnounce.changeStationPosition: true
+      bossBarTrainAnnounce.changeStationNumber: true
+      bossBarTrainAnnounce.registAnnounce: true
+      bossBarTrainAnnounce.removeAnnounce: true
+      bossBarTrainAnnounce.registBound: true
+      bossBarTrainAnnounce.removeBound: true
+      bossBarTrainAnnounce.registTerminal: true
+      bossBarTrainAnnounce.info: true
+      bossBarTrainAnnounce.registRedstone: true
+      bossBarTrainAnnounce.removeRedstone: true
+
+  bossBarTrainAnnounce.user:
+    description: 自分の路線を登録・編集・削除
+    children:
+      bossBarTrainAnnounce.select: true
+      bossBarTrainAnnounce.registLine: true
+      bossBarTrainAnnounce.removeLine: true
+      bossBarTrainAnnounce.changeLineName: true
+      bossBarTrainAnnounce.changeLineColor: true
+      bossBarTrainAnnounce.addType: true
+      bossBarTrainAnnounce.removeType: true
+      bossBarTrainAnnounce.registStation: true
+      bossBarTrainAnnounce.removeStation: true
+      bossBarTrainAnnounce.changeStationName: true
+      bossBarTrainAnnounce.changeStationPosition: true
+      bossBarTrainAnnounce.changeStationNumber: true
+      bossBarTrainAnnounce.registAnnounce: true
+      bossBarTrainAnnounce.removeAnnounce: true
+      bossBarTrainAnnounce.registBound: true
+      bossBarTrainAnnounce.removeBound: true
+      bossBarTrainAnnounce.registTerminal: true
+      bossBarTrainAnnounce.info: true
+      bossBarTrainAnnounce.registRedstone: true
+      bossBarTrainAnnounce.removeRedstone: true
+
+  bossBarTrainAnnounce.select:
+    description: 座標選択
+    default: op
+  bossBarTrainAnnounce.registLine:
+    description: 路線登録
+    default: op
+  bossBarTrainAnnounce.removeLine:
+    description: 路線削除
+    default: op
+  bossBarTrainAnnounce.changeLineName:
+    description: 路線名変更
+    default: op
+  bossBarTrainAnnounce.changeLineColor:
+    description: 路線カラー変更
+    default: op
+  bossBarTrainAnnounce.addType:
+    description: 種別追加
+    default: op
+  bossBarTrainAnnounce.removeType:
+    description: 種別削除
+    default: op
+  bossBarTrainAnnounce.registStation:
+    description: 駅登録
+    default: op
+  bossBarTrainAnnounce.removeStation:
+    description: 駅削除
+    default: op
+  bossBarTrainAnnounce.changeStationName:
+    description: 駅名変更
+    default: op
+  bossBarTrainAnnounce.changeStationPosition:
+    description: 駅位置変更
+    default: op
+  bossBarTrainAnnounce.changeStationNumber:
+    description: 駅ナンバリング変更
+    default: op
+  bossBarTrainAnnounce.registAnnounce:
+    description: アナウンス登録
+    default: op
+  bossBarTrainAnnounce.removeAnnounce:
+    description: アナウンス削除
+    default: op
+  bossBarTrainAnnounce.selectLine:
+    description: 路線選択
+    default: OP
+  bossBarTrainAnnounce.registBound:
+    description: 行き先設定
+    default: op
+  bossBarTrainAnnounce.removeBound:
+    description: 行き先削除
+    default: op
+  bossBarTrainAnnounce.registTerminal:
+    description: 終着駅設定
+    default: op
+  bossBarTrainAnnounce.info:
+    description: 情報表示
+    default: op
+  bossBarTrainAnnounce.registRedstone:
+    description: レッドストーン制御追加
+    default: op
+  bossBarTrainAnnounce.removeRedstone:
+    description: レッドストーン制御解除
+    default: op
+
