@@ -6,14 +6,17 @@ import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
 import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
 import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.dao.AnnounceInfoDao;
+import com.github.rypengu23.bossbartrainannounce.dao.LineDao;
 import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
 import com.github.rypengu23.bossbartrainannounce.util.CheckUtil;
 import com.github.rypengu23.bossbartrainannounce.util.ConvertUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Command_flag {
 
@@ -40,9 +43,13 @@ public class Command_flag {
         //フラグ
         if(args[1].equalsIgnoreCase("bound")){
 
-            if(args.length == 4){
-                //登録
-                registBound(player, convertUtil.convertDoublePercentToSpace(args[2]), convertUtil.convertDoublePercentToSpace(args[3]));
+            if(args.length == 4) {
+                //登録(直通なし)
+                registBound(player, convertUtil.convertDoublePercentToSpace(args[2]), convertUtil.convertDoublePercentToSpace(args[3]), null, null);
+            }else if(args.length == 6){
+                //登録(直通あり)
+                registBound(player, convertUtil.convertDoublePercentToSpace(args[2]), convertUtil.convertDoublePercentToSpace(args[3]),  convertUtil.convertDoublePercentToSpace(args[4]), args[5]);
+
             }else if(args.length == 2){
                 //削除
                 removeBound(player);
@@ -75,12 +82,23 @@ public class Command_flag {
                 player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
                 return;
             }
+        }else if(args[1].equalsIgnoreCase("direction")){
+
+            if(args.length == 2) {
+                //レッドストーン登録・解除
+                registDirection(player);
+            }else{
+                //不正
+                player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
+                return;
+            }
         }else{
             //不正
             player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
             return;
         }
     }
+
 
     /**
      * 引数のコマンドがフラグ関連のコマンドか判定
@@ -105,10 +123,12 @@ public class Command_flag {
      * @param player コマンド送信者
      * @param boundJP 行き先(日本語)
      * @param boundEN 行き先(英語)
+     * @param throughService 直通先路線名
      */
-    public void registBound(Player player, String boundJP, String boundEN){
+    public void registBound(Player player, String boundJP, String boundEN, String throughService, String throughLineOwnerName){
 
         CheckUtil checkUtil = new CheckUtil();
+        LineDao lineDao = new LineDao();
         AnnounceInfoDao announceInfoDao = new AnnounceInfoDao();
 
         //権限チェック
@@ -142,14 +162,81 @@ public class Command_flag {
             return;
         }
 
+
+        //直通先が指定されている場合
+        if(throughService != null) {
+
+            //直通先をリスト化
+            String[] throughServiceList = throughService.split(",");
+            String[] throughLineOwnerList = throughLineOwnerName.split(",");
+
+            //直通先路線とオーナーの個数チェック
+            if(throughLineOwnerList.length != throughServiceList.length){
+                player.sendMessage("§c[" + mainConfig.getPrefix() + "] §f直通先リストの路線名とオーナーの数が一致しません。");
+                return;
+            }
+
+            for(int i=0; i<throughServiceList.length; i++) {
+
+                //直通先路線所持プレイヤー存在チェック
+                Player throughLineOwner = Bukkit.getServer().getPlayer(throughLineOwnerList[i]);
+                if (throughLineOwner == null) {
+                    player.sendMessage("§c[" + mainConfig.getPrefix() + "] §f指定されたプレイヤーは存在しません。");
+                    return;
+                }
+
+                //直通先路線名存在チェック
+                if (!lineDao.checkLineExit(throughLineOwner.getUniqueId().toString(), throughServiceList[i])) {
+                    player.sendMessage("§c[" + mainConfig.getPrefix() + "] §f直通先の路線が存在しません。");
+                    return;
+                } else {
+                    //路線名を漢字に変換
+                    throughServiceList[i] = lineDao.getLineNameJP(throughLineOwner.getUniqueId().toString(), throughServiceList[i]);
+                }
+
+            }
+
+            //路線リストを上書き
+            StringBuilder throughServiceWork = new StringBuilder();
+            for(int i=0; i<throughServiceList.length; i++){
+                if(i!=0) {
+                    throughServiceWork.append(",");
+                }
+                throughServiceWork.append(throughServiceList[i]);
+            }
+            throughService = throughServiceWork.toString();
+
+            //オーナーリストを上書き
+            StringBuilder throughLineOwnerNameWork = new StringBuilder();
+            for(int i=0; i<throughLineOwnerList.length; i++){
+                if(i!=0) {
+                    throughLineOwnerNameWork.append(",");
+                }
+                throughLineOwnerNameWork.append(Bukkit.getServer().getPlayer(throughLineOwnerList[i]).getUniqueId().toString());
+            }
+            throughLineOwnerName = throughLineOwnerNameWork.toString();
+        }
+
+        boolean overwrite = false;
+        //現時点で行き先が登録されているか
+        if (!checkUtil.checkNullOrBlank(announceInfo.getBoundJP()) || !checkUtil.checkNullOrBlank(announceInfo.getBoundEN())){
+            overwrite = true;
+        }
+
         //行き先をセット
         announceInfo.setBoundJP(boundJP);
         announceInfo.setBoundEN(boundEN);
+        //直通先路線をセット
+        announceInfo.setViaLineNameJP(throughService);
+        announceInfo.setViaLineOwnerUUID(throughLineOwnerName);
 
         //登録
         announceInfoDao.updateAnnounceInfo(announceInfo);
-        player.sendMessage("§a["+ mainConfig.getPrefix() +"] §f" + CommandMessage.Command_Flag_RegistBound);
-
+        if(overwrite){
+            player.sendMessage("§a[" + mainConfig.getPrefix() + "] §f行き先を上書き登録しました。");
+        }else {
+            player.sendMessage("§a[" + mainConfig.getPrefix() + "] §f" + CommandMessage.Command_Flag_RegistBound);
+        }
     }
 
     /**
@@ -168,7 +255,7 @@ public class Command_flag {
         }
 
         //プレイヤーが選択しているアナウンス情報を取得
-        if(checkUtil.checkSelectPositionPos1(player)){
+        if(!checkUtil.checkSelectPositionPos1(player)){
             player.sendMessage("§c["+ mainConfig.getPrefix() +"] §fアナウンス地点が選択されていません。");
             return;
         }
@@ -186,9 +273,19 @@ public class Command_flag {
             return;
         }
 
+        //現時点で行き先が登録されているか
+        if (checkUtil.checkNullOrBlank(announceInfo.getBoundJP()) || checkUtil.checkNullOrBlank(announceInfo.getBoundEN())){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f行き先・直通先が登録されていません。");
+            return;
+        }
+
         //行き先をセット
         announceInfo.setBoundJP(null);
         announceInfo.setBoundEN(null);
+
+        //直通先路線をセット
+        announceInfo.setViaLineNameJP(null);
+        announceInfo.setViaLineOwnerUUID(null);
 
         //登録
         announceInfoDao.updateAnnounceInfo(announceInfo);
@@ -367,4 +464,65 @@ public class Command_flag {
         player.sendMessage("§b["+ mainConfig.getPrefix() +"] §f選択した地点のレッドストーン制御を解除しました！");
     }
 
+    /**
+     * アナウンスに方角制御を追加・解除
+     * @param player
+     */
+    private void registDirection(Player player) {
+
+        CheckUtil checkUtil = new CheckUtil();
+        AnnounceInfoDao announceInfoDao = new AnnounceInfoDao();
+
+        //権限チェック
+        if(!player.hasPermission("bossBarTrainAnnounce.registDirection")){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandDoNotHavePermission);
+            return;
+        }
+
+        //セレクトポジションチェック(pos1)
+        if(!checkUtil.checkSelectPositionPos1(player)){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §fpos1が選択されていません。");
+            return;
+        }
+
+        //選択した位置にアナウンス地点が存在するか
+        SelectPositionModel selectPosition = BossBarTrainAnnounce.selectPosition.get(player);
+        AnnounceInfoModel announceInfo = announceInfoDao.getAnnounceForCoordinate(selectPosition.getWorldName(), selectPosition.getPos1X(), selectPosition.getPos1Y(), selectPosition.getPos1Z());
+        if(announceInfo == null){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f選択した地点にアナウンスは登録されていません。");
+            return;
+        }
+
+        //セレクトポジションチェック(pos2)
+        if(!checkUtil.checkSelectPositionPos2(player) && announceInfo.getDirection() != 0){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §fpos2が選択されていません。");
+            return;
+        }
+
+        //路線の所有者チェック
+        if(!announceInfo.getUUID().equalsIgnoreCase(player.getUniqueId().toString())){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandDoNotHavePermission);
+            return;
+        }
+
+        int direction = 0;
+        if(announceInfo.getDirection() == 0) {
+            direction = checkUtil.checkPositionAdjacent(selectPosition);
+            System.out.println(direction);
+            //pos1とpos2が隣接しているか
+            if (direction == -1) {
+                player.sendMessage("§c[" + mainConfig.getPrefix() + "] §f隣接するブロックを選択して下さい。");
+                return;
+            }
+        }
+
+        //登録
+        announceInfo.setDirection(direction);
+        announceInfoDao.updateAnnounceInfo(announceInfo);
+        if(direction == 0){
+            player.sendMessage("§b[" + mainConfig.getPrefix() + "] §f選択した地点の方角制御を解除しました！");
+        }else {
+            player.sendMessage("§b[" + mainConfig.getPrefix() + "] §f選択した地点に方角制御を設定しました！");
+        }
+    }
 }

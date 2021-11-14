@@ -105,7 +105,7 @@ public class Command_select {
         }
 
         //数値チェック
-        if(!(StringUtils.isNumeric(x) && StringUtils.isNumeric(y) && StringUtils.isNumeric(z))){
+        if(!checkUtil.checkNumeric(x) && !checkUtil.checkNumeric(y) && !checkUtil.checkNumeric(z)){
             player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f数値以外が入力されています。");
             return false;
         }

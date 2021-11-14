@@ -5,6 +5,11 @@ import org.bukkit.configuration.Configuration;
 public class MessageConfig {
     //バージョン
     private final Double version;
+
+    //削除ワード
+    private final String removeWord1;
+    private final String removeWord2;
+
     //アナウンス情報
     private final String trainInformationJPAnnounce;
     private final String trainInformationENAnnounce;
@@ -12,6 +17,8 @@ public class MessageConfig {
     private final String viaTrainInformationENAnnounce;
     private final String loopTrainInformationJPAnnounce;
     private final String loopTrainInformationENAnnounce;
+    private final String viaLoopTrainInformationJPAnnounce;
+    private final String viaLoopTrainInformationENAnnounce;
     private final String nextStationJPAnnounce;
     private final String nextStationENAnnounce;
     private final String nextStationTerminalJPAnnounce;
@@ -36,9 +43,14 @@ public class MessageConfig {
     private final String nextKatakana;
     private final String soonKanji;
     private final String soonEN;
+    private final String stoppingStationKanji;
+    private final String stoppingStationEN;
 
     MessageConfig(Configuration config){
         version = config.getDouble("version");
+
+        removeWord1 = config.getString("removeWord1");
+        removeWord2 = config.getString("removeWord2");
 
         trainInformationJPAnnounce = config.getString("chatAnnounce.trainInformationJPAnnounce");
         trainInformationENAnnounce = config.getString("chatAnnounce.trainInformationENAnnounce");
@@ -46,6 +58,8 @@ public class MessageConfig {
         viaTrainInformationENAnnounce = config.getString("chatAnnounce.viaTrainInformationENAnnounce");
         loopTrainInformationJPAnnounce = config.getString("chatAnnounce.loopTrainInformationJPAnnounce");
         loopTrainInformationENAnnounce = config.getString("chatAnnounce.loopTrainInformationENAnnounce");
+        viaLoopTrainInformationJPAnnounce = config.getString("chatAnnounce.viaLoopTrainInformationJPAnnounce");
+        viaLoopTrainInformationENAnnounce = config.getString("chatAnnounce.viaLoopTrainInformationENAnnounce");
         nextStationJPAnnounce = config.getString("chatAnnounce.nextStationJPAnnounce");
         nextStationENAnnounce = config.getString("chatAnnounce.nextStationENAnnounce");
         nextStationTerminalJPAnnounce = config.getString("chatAnnounce.nextStationTerminalJPAnnounce");
@@ -70,10 +84,20 @@ public class MessageConfig {
         nextKatakana = config.getString("bossBar.nextKatakana");
         soonKanji = config.getString("bossBar.soonKanji");
         soonEN = config.getString("bossBar.soonEN");
+        stoppingStationKanji = config.getString("bossBar.stoppingStationKanji");
+        stoppingStationEN = config.getString("bossBar.stoppingStationEN");
     }
 
     public Double getVersion() {
         return version;
+    }
+
+    public String getRemoveWord1() {
+        return removeWord1;
+    }
+
+    public String getRemoveWord2() {
+        return removeWord2;
     }
 
     public String getTrainInformationJPAnnounce() {
@@ -98,6 +122,14 @@ public class MessageConfig {
 
     public String getLoopTrainInformationENAnnounce() {
         return loopTrainInformationENAnnounce;
+    }
+
+    public String getViaLoopTrainInformationJPAnnounce() {
+        return viaLoopTrainInformationJPAnnounce;
+    }
+
+    public String getViaLoopTrainInformationENAnnounce() {
+        return viaLoopTrainInformationENAnnounce;
     }
 
     public String getNextStationJPAnnounce() {
@@ -190,5 +222,13 @@ public class MessageConfig {
 
     public String getSoonEN() {
         return soonEN;
+    }
+
+    public String getStoppingStationKanji() {
+        return stoppingStationKanji;
+    }
+
+    public String getStoppingStationEN() {
+        return stoppingStationEN;
     }
 }

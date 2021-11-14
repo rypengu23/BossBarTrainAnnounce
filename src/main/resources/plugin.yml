@@ -29,9 +29,11 @@ permissions:
       bossBarTrainAnnounce.registBound: true
       bossBarTrainAnnounce.removeBound: true
       bossBarTrainAnnounce.registTerminal: true
+      bossBarTrainAnnounce.registDirection: true
       bossBarTrainAnnounce.info: true
       bossBarTrainAnnounce.registRedstone: true
       bossBarTrainAnnounce.removeRedstone: true
+      bossBarTrainAnnounce.reload: true
 
   bossBarTrainAnnounce.user:
     description: 自分の路線を登録・編集・削除
@@ -53,6 +55,7 @@ permissions:
       bossBarTrainAnnounce.registBound: true
       bossBarTrainAnnounce.removeBound: true
       bossBarTrainAnnounce.registTerminal: true
+      bossBarTrainAnnounce.registDirection: true
       bossBarTrainAnnounce.info: true
       bossBarTrainAnnounce.registRedstone: true
       bossBarTrainAnnounce.removeRedstone: true
@@ -111,6 +114,9 @@ permissions:
   bossBarTrainAnnounce.registTerminal:
     description: 終着駅設定
     default: op
+  bossBarTrainAnnounce.registDirection:
+    description: 方角制御設定
+    default: op
   bossBarTrainAnnounce.info:
     description: 情報表示
     default: op
@@ -119,5 +125,8 @@ permissions:
     default: op
   bossBarTrainAnnounce.removeRedstone:
     description: レッドストーン制御解除
+    default: op
+  bossBarTrainAnnounce.reload:
+    description: Configリロード
     default: op
 

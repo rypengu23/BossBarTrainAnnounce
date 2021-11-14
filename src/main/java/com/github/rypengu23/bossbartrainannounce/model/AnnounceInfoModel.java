@@ -16,14 +16,16 @@ public class AnnounceInfoModel {
     private String typeJP;
     private String exit;
     private boolean terminal;
+    private int direction;
     private String viaLineNameJP;
+    private String viaLineOwnerUUID;
     private boolean redstone;
     private int onOrOff;
     private int redstonePosX;
     private int redstonePosY;
     private int redstonePosZ;
 
-    public AnnounceInfoModel(String UUID, int nextOrSoon, String worldName, int posX, int posY, int posZ, String nextStationNameKanji, String lineNameJP, String boundJP, String boundEN, String typeJP, String exit, boolean terminal, String viaLineNameJP, boolean redstone, int onOrOff, int redstonePosX, int redstonePosY, int redstonePosZ) {
+    public AnnounceInfoModel(String UUID, int nextOrSoon, String worldName, int posX, int posY, int posZ, String nextStationNameKanji, String lineNameJP, String boundJP, String boundEN, String typeJP, String exit, boolean terminal, int direction, String viaLineNameJP, String viaLineOwnerUUID, boolean redstone, int onOrOff, int redstonePosX, int redstonePosY, int redstonePosZ) {
         this.UUID = UUID;
         this.nextOrSoon = nextOrSoon;
         this.worldName = worldName;
@@ -37,7 +39,9 @@ public class AnnounceInfoModel {
         this.typeJP = typeJP;
         this.exit = exit;
         this.terminal = terminal;
+        this.direction = direction;
         this.viaLineNameJP = viaLineNameJP;
+        this.viaLineOwnerUUID = viaLineOwnerUUID;
         this.redstone = redstone;
         this.onOrOff = onOrOff;
         this.redstonePosX = redstonePosX;
@@ -153,12 +157,28 @@ public class AnnounceInfoModel {
         this.terminal = terminal;
     }
 
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
+    }
+
     public String getViaLineNameJP() {
         return viaLineNameJP;
     }
 
     public void setViaLineNameJP(String viaLineNameJP) {
         this.viaLineNameJP = viaLineNameJP;
+    }
+
+    public String getViaLineOwnerUUID() {
+        return viaLineOwnerUUID;
+    }
+
+    public void setViaLineOwnerUUID(String viaLineOwnerUUID) {
+        this.viaLineOwnerUUID = viaLineOwnerUUID;
     }
 
     public boolean isRedstone() {

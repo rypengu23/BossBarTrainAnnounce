@@ -1,6 +1,12 @@
 ###########################################
 # チャットメッセージアナウンスファイル
-version: 1.0
+version: 1.1
+###########################################
+
+# アナウンスから削除する単語
+removeWord1: ", local§r service"
+removeWord2: " local§r service"
+
 ###########################################
 #
 # 以下の文言がアナウンス時に置き換わります。
@@ -18,6 +24,8 @@ version: 1.0
 # {StationNameKatakana}：駅名(カタカナ)
 # {TransferJP}：乗り換え路線名(日本語)
 # {TransferEN}：乗り換え路線名(英語)
+# {Number}：駅ナンバリング(カッコ無し) 例:A-01
+# {BracketsNumber}：駅ナンバリング(カッコ付き) 例:(A-01)
 #
 ###########################################
 
@@ -26,16 +34,20 @@ version: 1.0
 ################
 chatAnnounce:
   #路線名・行き先案内
-  trainInformationJPAnnounce: "この電車は{LineNameJP} {TypeJP}、{BoundJP} 行きです。"
-  trainInformationENAnnounce: "This is the {LineNameEN}, {TypeEN} service train for {BoundEN}."
+  trainInformationJPAnnounce: "この電車は{LineNameJP} {TypeJP}§r、{BoundJP} 行きです。"
+  trainInformationENAnnounce: "This is the {LineNameEN}, {TypeEN}§r service train for {BoundEN}."
 
   #路線名・行き先案内(直通)
-  viaTrainInformationJPAnnounce: "この電車は{LineNameJP} {ViaLineNameJP}直通 {TypeJP}、{BoundJP} 行きです。"
-  viaTrainInformationENAnnounce: "This is the {LineNameEN} train {TypeEN} service for {BoundEN}, via the {ViaLineNameEN}."
+  viaTrainInformationJPAnnounce: "この電車は{LineNameJP} {ViaLineNameJP}直通 {TypeJP}§r、{BoundJP} 行きです。"
+  viaTrainInformationENAnnounce: "This is the {LineNameEN} train {TypeEN}§r service for {BoundEN}, via {ViaLineNameEN}."
 
   #路線名・行き先案内(環状線)
-  loopTrainInformationJPAnnounce: "この電車は{LineNameJP} {TypeJP}、{BoundJP}行きです。"
-  loopTrainInformationENAnnounce: "This is the {LineNameEN} {TypeEN} service train bound for {BoundEN}."
+  loopTrainInformationJPAnnounce: "この電車は{LineNameJP} {TypeJP}§r、{BoundJP}行きです。"
+  loopTrainInformationENAnnounce: "This is the {LineNameEN} {TypeEN}§r service train bound for {BoundEN}."
+
+  #路線名・行き先案内(環状線)(直通)
+  viaLoopTrainInformationJPAnnounce: "この電車は{LineNameJP} {ViaLineNameJP}直通 {TypeJP}§r、{BoundJP} 行きです。"
+  viaLoopTrainInformationENAnnounce: "This is the {LineNameEN} train {TypeEN}§r service bound for {BoundEN}, via {ViaLineNameEN}."
 
   #次は
   nextStationJPAnnounce: "次は、{StationNameJP}です。"
@@ -59,7 +71,7 @@ chatAnnounce:
 
   #まもなく(終点)
   soonStationTerminalJPAnnounce: "まもなく終点、{StationNameJP}、{StationNameJP}。"
-  soonStationTerminalENAnnounce: "The next station is {StationNameEN}　terminal."
+  soonStationTerminalENAnnounce: "The next station is {StationNameEN} terminal."
 
   #乗り換え
   transferJPAnnounce: "{TransferJP}は、お乗り換えです。"
@@ -76,7 +88,7 @@ chatAnnounce:
 
 ###########################################
 #
-# 駅内の場合、以下の文言がボスバー表示時に置き換わります。
+# 以下の文言がボスバー表示時に置き換わります。
 #
 # {LineNameJP}:路線名(日本語)
 # {LineNameEN}:路線名(英語)
@@ -85,6 +97,8 @@ chatAnnounce:
 # {StationNameKatakana}：駅名(カタカナ)
 # {TransferJP}：乗り換え路線名(日本語)
 # {TransferEN}：乗り換え路線名(英語)
+# {Number}：駅ナンバリング(カッコ無し) 例:A-01
+# {BracketsNumber}：駅ナンバリング(カッコ付き) 例:(A-01)
 #
 ###########################################
 
@@ -94,9 +108,13 @@ chatAnnounce:
 bossBar:
   #次は
   nextKanji: "次は {StationNameJP}"
-  nextEN: "Next {StationNameEN}"
+  nextEN: "Next {StationNameEN} {BracketsNumber}"
   nextKatakana: "次は {StationNameKatakana}"
 
   #まもなく
   soonKanji: "まもなく {StationNameJP}"
-  soonEN: "{StationNameEN soon}"
+  soonEN: "{StationNameEN} {BracketsNumber} soon"
+
+  #停車中
+  stoppingStationKanji: "{StationNameJP}"
+  stoppingStationEN: "{StationNameEN} {BracketsNumber}"

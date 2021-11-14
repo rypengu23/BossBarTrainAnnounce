@@ -52,7 +52,7 @@ public class Command_station {
                 registStation(player, convertUtil.convertDoublePercentToSpace(args[1]), convertUtil.convertDoublePercentToSpace(args[2]), convertUtil.convertDoublePercentToSpace(args[3]), convertUtil.convertDoublePercentToSpace(args[4]), convertUtil.convertDoublePercentToSpace(args[5]));
             }else{
                 //不正
-                player.sendMessage("[§c"+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
+                player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
                 return;
             }
 
@@ -63,7 +63,7 @@ public class Command_station {
                 removeStation(player, convertUtil.convertDoublePercentToSpace(args[1]), convertUtil.convertDoublePercentToSpace(args[2]));
             }else{
                 //不正
-                player.sendMessage("[§c"+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
+                player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
                 return;
             }
         }else if(args[0].equalsIgnoreCase("changestationname")){
@@ -73,7 +73,7 @@ public class Command_station {
                 changeStationName(player, convertUtil.convertDoublePercentToSpace(args[1]), convertUtil.convertDoublePercentToSpace(args[2]), convertUtil.convertDoublePercentToSpace(args[3]), convertUtil.convertDoublePercentToSpace(args[4]), convertUtil.convertDoublePercentToSpace(args[5]));
             }else{
                 //不正
-                player.sendMessage("[§c"+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
+                player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
                 return;
             }
         }else if(args[0].equalsIgnoreCase("movestation")){
@@ -83,7 +83,7 @@ public class Command_station {
                 changeStationPosition(player, convertUtil.convertDoublePercentToSpace(args[1]), convertUtil.convertDoublePercentToSpace(args[2]));
             }else{
                 //不正
-                player.sendMessage("[§c"+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
+                player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
                 return;
             }
         }else if(args[0].equalsIgnoreCase("changestationnumber")){
@@ -93,7 +93,7 @@ public class Command_station {
                 changeStationNumber(player, convertUtil.convertDoublePercentToSpace(args[1]), convertUtil.convertDoublePercentToSpace(args[2]), convertUtil.convertDoublePercentToSpace(args[3]));
             }else{
                 //不正
-                player.sendMessage("[§c"+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
+                player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
                 return;
             }
         }else{
@@ -165,21 +165,7 @@ public class Command_station {
             return false;
         }
 
-        //駅名存在チェック(漢字)
-        if(stationDao.checkStationExit(player.getUniqueId().toString(), lineNameJP, stationNameKanji)){
-            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f指定された路線には既に同名の駅が登録されています。");
-            return false;
-        }
-        //駅名存在チェック(英語)
-        if(stationDao.checkStationExit(player.getUniqueId().toString(), lineNameJP, stationNameEn)){
-            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f指定された路線には既に同名の駅が登録されています。");
-            return false;
-        }
-        //駅名存在チェック(カタカナ)
-        if(stationDao.checkStationExit(player.getUniqueId().toString(), lineNameJP, stationNameKatakana)){
-            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f指定された路線には既に同名の駅が登録されています。");
-            return false;
-        }
+
 
         //駅名EN
         //英数字記号チェック
@@ -225,7 +211,7 @@ public class Command_station {
         if(stationDao.registStation(new StationModel(player.getUniqueId().toString(), lineNameJP, stationNameKanji, stationNameEn, stationNameKatakana, select, number)) > 0){
 
             player.sendMessage("§a["+ mainConfig.getPrefix() +"] §f駅を登録しました！");
-            player.sendMessage("§f路線名: "+ lineNameJP +" 駅名: "+ stationNameKanji);
+            player.sendMessage("§f路線名: "+ lineNameJP +" 駅名(和名): "+ stationNameKanji+" 駅名(英語): "+ stationNameEn+" 駅名(ｶﾀｶﾅ): "+ stationNameKatakana);
             //アナウンスロケーション情報のアップデート
             StationLocationJudgeUtil stationLocationJudgeUtil = new StationLocationJudgeUtil();
             stationLocationJudgeUtil.updateStationListCache();
@@ -374,7 +360,7 @@ public class Command_station {
         if(stationDao.changeStationName(player.getUniqueId().toString(), lineName, oldStationName, newStationNameKanji, newStationNameEn, newStationNameKatakana) > 0){
 
             player.sendMessage("§a["+ mainConfig.getPrefix() +"] §f駅名を変更しました！");
-            player.sendMessage("§f旧駅名: "+ oldStationName +" 新駅名: "+ newStationNameKanji);
+            player.sendMessage("§f旧駅名: "+ oldStationName +" 新駅名(和名): "+ newStationNameKanji +" 新駅名(英語): "+ newStationNameEn +" 新駅名(ｶﾀｶﾅ): "+ newStationNameKatakana);
 
             //アナウンス情報に登録された駅名も変更
             AnnounceInfoDao announceInfoDao = new AnnounceInfoDao();

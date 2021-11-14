@@ -1,8 +1,10 @@
 package com.github.rypengu23.bossbartrainannounce.command;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -65,7 +67,8 @@ public class TabComplete implements TabCompleter {
             //フラグ関連
             if(sender.hasPermission("bossBarTrainAnnounce.registBound") ||
                     sender.hasPermission("bossBarTrainAnnounce.removeBound") ||
-                    sender.hasPermission("bossBarTrainAnnounce.registTerminal")){
+                    sender.hasPermission("bossBarTrainAnnounce.registTerminal") ||
+                sender.hasPermission("bossBarTrainAnnounce.registDirection")){
                 onCompList.add("flag");
             }
 
@@ -77,6 +80,11 @@ public class TabComplete implements TabCompleter {
             //選択
             if(sender.hasPermission("bossBarTrainAnnounce.select")){
                 onCompList.add("select");
+            }
+
+            //Config関連
+            if(sender.hasPermission("bossBarTrainAnnounce.reload")){
+                onCompList.add("reload");
             }
 
         }else if(args.length == 2){
@@ -139,6 +147,9 @@ public class TabComplete implements TabCompleter {
             }
             if(args[0].equalsIgnoreCase("flag") && (sender.hasPermission("bossBarTrainAnnounce.registRedstone") || sender.hasPermission("bossBarTrainAnnounce.removeRedstone"))){
                 onCompList.add("redstone");
+            }
+            if(args[0].equalsIgnoreCase("flag") && (sender.hasPermission("bossBarTrainAnnounce.registDirection") || sender.hasPermission("bossBarTrainAnnounce.removeRedstone"))){
+                onCompList.add("direction");
             }
 
             //情報関連
@@ -336,6 +347,11 @@ public class TabComplete implements TabCompleter {
                 onCompList.add("次の駅名");
             }
 
+            //フラグ関連
+            if(args[0].equalsIgnoreCase("flag") && args[1].equalsIgnoreCase("bound") && sender.hasPermission("bossBarTrainAnnounce.registBound")){
+                onCompList.add("直通先路線名(オプション)");
+            }
+
             //選択
             if(args[0].equalsIgnoreCase("select") && sender.hasPermission("bossBarTrainAnnounce.select")){
                 onCompList.add("z");
@@ -361,6 +377,14 @@ public class TabComplete implements TabCompleter {
             }
             if(args[0].equalsIgnoreCase("changestationname") && sender.hasPermission("bossBarTrainAnnounce.changeStationName")){
                 onCompList.add("新しい駅名(カタカナ)");
+            }
+
+            //フラグ関連
+            if(args[0].equalsIgnoreCase("flag") && args[1].equalsIgnoreCase("bound") && sender.hasPermission("bossBarTrainAnnounce.registBound")){
+                for(Player player:Bukkit.getServer().getOnlinePlayers()){
+                    onCompList.add(player.getName());
+                }
+                onCompList.add("直通先路線所有者(オプション)");
             }
 
         }else if(args.length == 7) {

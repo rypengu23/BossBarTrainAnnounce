@@ -216,8 +216,8 @@ public class BossBarUtil {
             lcdList.add(stationPlaceHolderUtil.replaceMessageConfig(messageConfig.getSoonEN()));
         } else if (nextOrSoonOrStopOrMove == 2) {
             //停車中の場合
-            lcdList.add(stationModel.getStationNameKanji());
-            lcdList.add(stationModel.getStationNameEnglish());
+            lcdList.add(stationPlaceHolderUtil.replaceMessageConfig(messageConfig.getStoppingStationKanji()));
+            lcdList.add(stationPlaceHolderUtil.replaceMessageConfig(messageConfig.getStoppingStationEN()));
         } else {
             //駅内走行中の場合
             lcdList.add("");

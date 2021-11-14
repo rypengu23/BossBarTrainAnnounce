@@ -79,6 +79,14 @@ public class StationPlaceHolderUtil {
             word = word.replace("{TransferEN}", "");
         }
 
+        if(stationModel.getNumber() != null) {
+            word = word.replace("{Number}", stationModel.getNumber());
+            word = word.replace("{BracketsNumber}", "("+ stationModel.getNumber() +")");
+        }else{
+            word = word.replace("{Number}", "");
+            word = word.replace("{BracketsNumber}", "");
+        }
+
         return word;
     }
 

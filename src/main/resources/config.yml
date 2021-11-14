@@ -2,9 +2,8 @@
 #  BossBarTrainAnnounce
 # =======================================
 # @author     rypengu23
-# @license    LGPLv3
 # @copyright  Copyright ryoengu23 2021
-version: 1.0
+version: 1.1
 language: "ja"
 # =======================================
 
@@ -22,7 +21,13 @@ database:
 select:
   item: "GOLDEN_AXE"
 
-
+# その他設定
 setting:
  prefix: "BBTA"
+
+ # 乗り換え取得半径
  transferRange: 200
+
+ # アナウンス送信間隔(tick)
+ # アナウンス1通1通の間隔を設定
+ announceInterval: 50L

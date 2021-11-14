@@ -185,12 +185,19 @@ public class Command_announce {
             return false;
         }
 
-        if(announceInfoDao.insertAnnounceInfo(new AnnounceInfoModel(player.getUniqueId().toString(), nextOrSoon, selectPosition.getWorldName(), selectPosition.getPos1X(), selectPosition.getPos1Y(), selectPosition.getPos1Z(), stationNameKanji, lineName, null, null, type, exit, false, null, false, 0, 0, 0,0)) > 0){
+        if(announceInfoDao.insertAnnounceInfo(new AnnounceInfoModel(player.getUniqueId().toString(), nextOrSoon, selectPosition.getWorldName(), selectPosition.getPos1X(), selectPosition.getPos1Y(), selectPosition.getPos1Z(), stationNameKanji, lineName, null, null, type, exit, false, 0,null,  null, false, 0, 0, 0,0)) > 0){
             //アナウンスロケーション情報のアップデート
             AnnounceLocationJudgeUtil announceLocationJudgeUtil = new AnnounceLocationJudgeUtil();
             announceLocationJudgeUtil.updateAnnounceListCache();
+
+            String nextOrSoonInfo = "";
+            if(nextOrSoon == 0){
+                nextOrSoonInfo = "NEXT";
+            }else{
+                nextOrSoonInfo = "SOON";
+            }
             player.sendMessage("§a["+ mainConfig.getPrefix() +"] §fアナウンス地点を登録しました！");
-            player.sendMessage("§f路線名: "+ lineName +" 種別:"+ type +" 次の駅名:"+ stationNameKanji);
+            player.sendMessage("§f路線名: "+ lineName +" 種別:"+ type +" ｱﾅｳﾝｽ種別:"+ nextOrSoonInfo +" 次の駅名:"+ stationNameKanji);
             return true;
         }
         return false;

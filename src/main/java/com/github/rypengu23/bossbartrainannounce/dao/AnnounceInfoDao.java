@@ -114,7 +114,9 @@ public class AnnounceInfoDao {
                 }else{
                     model.setTerminal(true);
                 }
+                model.setDirection(result.getInt("AI.DIRECTION"));
                 model.setViaLineNameJP((result.getString("AI.VIA_LINE_NAME")));
+                model.setViaLineOwnerUUID((result.getString("AI.VIA_LINE_OWNER_UUID")));
 
                 result.getInt("AR.REDSTONE_ID");
                 if(result.wasNull()){
@@ -188,7 +190,9 @@ public class AnnounceInfoDao {
                 }else{
                     model.setTerminal(true);
                 }
+                model.setDirection(result.getInt("AI.DIRECTION"));
                 model.setViaLineNameJP((result.getString("AI.VIA_LINE_NAME")));
+                model.setViaLineOwnerUUID((result.getString("AI.VIA_LINE_OWNER_UUID")));
 
                 result.getInt("AI.REDSTONE_ID");
                 if(result.wasNull()){
@@ -273,7 +277,9 @@ public class AnnounceInfoDao {
             insertSql.append("TYPE_JP = ?, ");
             insertSql.append("DOOR_SIDE = ?, ");
             insertSql.append("TERMINAL = ?, ");
-            insertSql.append("VIA_LINE_NAME = ? ");
+            insertSql.append("DIRECTION = ?, ");
+            insertSql.append("VIA_LINE_NAME = ?, ");
+            insertSql.append("VIA_LINE_OWNER_UUID = ? ");
             insertSql.append("WHERE ");
             insertSql.append("WORLD = ? AND ");
             insertSql.append("X = ? AND ");
@@ -293,8 +299,9 @@ public class AnnounceInfoDao {
             }else{
                 ps.setInt(p++, 1);
             }
-
+            ps.setInt(p++, announceInfoModel.getDirection());
             ps.setString(p++, announceInfoModel.getViaLineNameJP());
+            ps.setString(p++, announceInfoModel.getViaLineOwnerUUID());
 
             ps.setString(p++, announceInfoModel.getWorldName());
             ps.setInt(p++, announceInfoModel.getPosX());

@@ -11,6 +11,7 @@ import com.github.rypengu23.bossbartrainannounce.util.AnnounceLocationJudgeUtil;
 import com.github.rypengu23.bossbartrainannounce.util.StationLocationJudgeUtil;
 import com.github.rypengu23.bossbartrainannounce.util.VehicleStopMonitorUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -38,6 +39,8 @@ public final class BossBarTrainAnnounce extends JavaPlugin implements Listener {
     //メモリ
     public static ArrayList<Player> moveInStationPlayerList = new ArrayList<>();
     public static ArrayList<Player> stopInStationPlayerList = new ArrayList<>();
+    public static HashMap<String, Location> playerLocationList = new HashMap<String, Location>();
+    public static HashMap<String, Location> playerBefore1BlockLocationList = new HashMap<String, Location>();
     public static HashMap<Player, SelectPositionModel> selectPosition = new HashMap<>();
 
     //メモリ(アナウンス情報)
@@ -64,6 +67,14 @@ public final class BossBarTrainAnnounce extends JavaPlugin implements Listener {
         Bukkit.getLogger().info("[BossBarTrainAnnounce] == BossBarTrainAnnounce Ver" + pluginVersion + " ==");
         Bukkit.getLogger().info("[BossBarTrainAnnounce] " + ConsoleMessage.BossBarTrainAnnounce_startupPlugin);
 
+        //Configの更新確認
+        ConfigUpdater configUpdater = new ConfigUpdater();
+        if(configUpdater.configUpdateCheck()){
+            configLoader = new ConfigLoader();
+            configLoader.reloadConfig();
+            mainConfig = configLoader.getMainConfig();
+            messageConfig = configLoader.getMessageConfig();
+        }
 
         //データベース接続
         ConnectDao connectDao = new ConnectDao();
@@ -78,7 +89,6 @@ public final class BossBarTrainAnnounce extends JavaPlugin implements Listener {
         }else{
             Bukkit.getLogger().warning("[BossBarTrainAnnounce] データベースへの接続に失敗しました。");
         }
-
 
         //リスナー登録
         PluginManager pm = Bukkit.getServer().getPluginManager();
@@ -115,6 +125,7 @@ public final class BossBarTrainAnnounce extends JavaPlugin implements Listener {
                 Command_flag command_flag = new Command_flag();
                 Command_info command_info = new Command_info();
                 Command_select command_select = new Command_select();
+                Command_Config command_config = new Command_Config();
 
                 if (sender instanceof Player) {
                     if (command_announce.checkCommandExit(args[0])) {
@@ -129,6 +140,8 @@ public final class BossBarTrainAnnounce extends JavaPlugin implements Listener {
                         command_info.sort(sender, args);
                     } else if (command_select.checkCommandExit(args[0])) {
                         command_select.sort(sender, args);
+                    } else if (command_config.checkCommandExit(args[0])) {
+                        command_config.sort(sender, args);
                     } else {
                         sender.sendMessage("§c[" + mainConfig.getPrefix() + "] §f" + CommandMessage.CommandFailure);
                     }

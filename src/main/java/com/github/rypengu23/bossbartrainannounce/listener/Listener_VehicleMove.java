@@ -1,8 +1,8 @@
 package com.github.rypengu23.bossbartrainannounce.listener;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
-import com.github.rypengu23.bossbartrainannounce.util.BossBarUtil;
-import com.github.rypengu23.bossbartrainannounce.util.AnnounceUtil;
+import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
+import com.github.rypengu23.bossbartrainannounce.util.*;
 import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
 import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
 import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
@@ -10,8 +10,6 @@ import com.github.rypengu23.bossbartrainannounce.dao.AnnounceInfoDao;
 import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
 import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import com.github.rypengu23.bossbartrainannounce.model.StationModel;
-import com.github.rypengu23.bossbartrainannounce.util.AnnounceLocationJudgeUtil;
-import com.github.rypengu23.bossbartrainannounce.util.StationLocationJudgeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -29,16 +27,11 @@ import java.util.HashMap;
 
 public class Listener_VehicleMove implements Listener {
 
-    private HashMap<String, Location> playerLocationList = new HashMap<String, Location>();
-
     @EventHandler
     /**
      * アナウンス・駅内走行を判定する
      */
     public void Listener_VehicleMoveEvent(VehicleMoveEvent event){
-
-        AnnounceLocationJudgeUtil announceLocationJudgeUtil = new AnnounceLocationJudgeUtil();
-        StationLocationJudgeUtil stationLocationJudgeUtil = new StationLocationJudgeUtil();
 
         //動いているエンティティがトロッコか
         if(event.getVehicle().getType() != EntityType.MINECART) {
@@ -53,25 +46,30 @@ public class Listener_VehicleMove implements Listener {
             return;
         }
 
+        AnnounceLocationJudgeUtil announceLocationJudgeUtil = new AnnounceLocationJudgeUtil();
+        StationLocationJudgeUtil stationLocationJudgeUtil = new StationLocationJudgeUtil();
+
         Player player = (Player)event.getVehicle().getPassengers().get(0);
         Vehicle vehicle = event.getVehicle();
         Location vehicleLocation = vehicle.getLocation();
 
         //プレイヤーが1マス動いたか確認する
         //プレイヤーロケーションリストに登録されているか
-        if(!playerLocationList.containsKey(player.getUniqueId().toString())) {
+        if(!BossBarTrainAnnounce.playerLocationList.containsKey(player.getUniqueId().toString())) {
             //されていなければ新規追加
-            playerLocationList.put(player.getUniqueId().toString(), vehicle.getLocation());
+            BossBarTrainAnnounce.playerLocationList.put(player.getUniqueId().toString(), vehicle.getLocation());
         }else{
             //されていた場合 → 登録値を取得
-            Location playerLocationHistory = playerLocationList.get(player.getUniqueId().toString());
+            Location playerLocationHistory = BossBarTrainAnnounce.playerLocationList.get(player.getUniqueId().toString());
             //登録値と現在地の値を比較 → 1マス以上動いていない場合、処理終了
             if(vehicleLocation.distance(playerLocationHistory) < 0.5){
                 return;
-            }else{
-                //1マス以上動いていたので、ロケーションリストを更新する
-                playerLocationList.put(player.getUniqueId().toString(), vehicle.getLocation());
             }
+
+            //1マス以上動いていたので、ロケーションリストを更新する
+            BossBarTrainAnnounce.playerBefore1BlockLocationList.put(player.getUniqueId().toString(), BossBarTrainAnnounce.playerLocationList.get(player.getUniqueId().toString()));
+            BossBarTrainAnnounce.playerLocationList.put(player.getUniqueId().toString(), vehicle.getLocation());
+
         }
 
         AnnounceInfoDao announceInfoDao = new AnnounceInfoDao();
@@ -118,11 +116,29 @@ public class Listener_VehicleMove implements Listener {
 
                 Location location = new Location(Bukkit.getWorld(announceInfo.getWorldName()), announceInfo.getRedstonePosX(), announceInfo.getRedstonePosY(), announceInfo.getRedstonePosZ());
 
-                if (announceInfo.getOnOrOff() == 0 && !location.getBlock().isBlockPowered()) {
-                    //登録されているレッドストーン箇所に入力がない & 設定がON
+                if (announceInfo.getOnOrOff() == 1 && !location.getBlock().isBlockPowered()) {
+                    // 設定がON & 登録されているレッドストーン箇所に入力がない
                     return;
-                } else if (announceInfo.getOnOrOff() == 1 && location.getBlock().isBlockPowered()) {
-                    //登録されているレッドストーン箇所に入力がある & 設定がオフ
+                } else if (announceInfo.getOnOrOff() == 0 && location.getBlock().isBlockPowered()) {
+                    // 設定がオフ & 登録されているレッドストーン箇所に入力がある
+                    return;
+                }
+            }
+        }
+
+        //方角制御確認
+        CheckUtil checkUtil = new CheckUtil();
+        if(announceInfo != null) {
+            if (announceInfo.getDirection() != 0) {
+
+                Location before1BlockLocation = BossBarTrainAnnounce.playerBefore1BlockLocationList.get(player.getUniqueId().toString());
+                int direction = checkUtil.checkPositionAdjacent(new SelectPositionModel(player.getWorld().getName(), vehicle.getLocation().getBlockX(), vehicle.getLocation().getBlockY(), vehicle.getLocation().getBlockZ(), before1BlockLocation.getBlockX(), before1BlockLocation.getBlockY(), before1BlockLocation.getBlockZ()));
+
+                if(direction == -1){
+                    //登録した方角が隣接していない
+                    return;
+                }else if(announceInfo.getDirection() != direction){
+                    //設定された方角から来ていない
                     return;
                 }
             }

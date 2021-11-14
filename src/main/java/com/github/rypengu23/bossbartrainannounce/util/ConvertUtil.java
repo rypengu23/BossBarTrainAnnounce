@@ -1,9 +1,23 @@
 package com.github.rypengu23.bossbartrainannounce.util;
 
+import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
+import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
+import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
+
 import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class ConvertUtil {
+
+    private final ConfigLoader configLoader;
+    private final MainConfig mainConfig;
+    private final MessageConfig messageConfig;
+
+    public ConvertUtil(){
+        configLoader = new ConfigLoader();
+        mainConfig = configLoader.getMainConfig();
+        messageConfig = configLoader.getMessageConfig();
+    }
 
     public String convertPercentAndColorCode(String str){
 
@@ -22,10 +36,10 @@ public class ConvertUtil {
 
     public String removeLocalService(String str){
 
-        if(str.toLowerCase().contains(", local service")){
-            return replaceAll( ", local service", "", str);
-        }else if(str.toLowerCase().contains(" local service")){
-            return replaceAll(" local service","",  str);
+        if(str.toLowerCase().contains(messageConfig.getRemoveWord1())){
+            return replaceAll( messageConfig.getRemoveWord1(), "", str);
+        }else if(str.toLowerCase().contains(messageConfig.getRemoveWord2())){
+            return replaceAll(messageConfig.getRemoveWord2(),"",  str);
         }else{
             return str;
         }

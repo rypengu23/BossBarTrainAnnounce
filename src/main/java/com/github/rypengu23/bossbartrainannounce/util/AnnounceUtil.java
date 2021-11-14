@@ -60,6 +60,10 @@ public class AnnounceUtil {
                 //通常路線 - 直通あり
                 sendMessageListJP.add(announcePlaceHolderUtil.replaceMessageConfig(messageConfig.getViaTrainInformationJPAnnounce()));
                 sendMessageListEN.add(announcePlaceHolderUtil.replaceMessageConfig(messageConfig.getViaTrainInformationENAnnounce()));
+            } else{
+                //環状線 - 直通あり
+                sendMessageListJP.add(announcePlaceHolderUtil.replaceMessageConfig(messageConfig.getViaLoopTrainInformationJPAnnounce()));
+                sendMessageListEN.add(announcePlaceHolderUtil.replaceMessageConfig(messageConfig.getViaLoopTrainInformationENAnnounce()));
             }
         }
 

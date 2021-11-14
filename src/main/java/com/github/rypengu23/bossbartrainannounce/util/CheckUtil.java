@@ -1,6 +1,8 @@
 package com.github.rypengu23.bossbartrainannounce.util;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
+import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -16,12 +18,13 @@ public class CheckUtil {
      */
     public boolean checkNumeric(String str){
 
-        for(int i = 0; i < str.length(); i++) {
-            if(!Character.isDigit(str.charAt(i))) {
-                return false;
-            }
+        if(str == null){
+            return false;
         }
-        return true;
+
+        Pattern pattern = Pattern.compile("^[0-9]+$|-[0-9]+$");
+
+        return pattern.matcher(str).matches();
     }
 
     /**
@@ -185,7 +188,7 @@ public class CheckUtil {
      * @param location2
      * @return
      */
-    public boolean checkSameLocation(Location location1, Location location2){
+    public static boolean checkSameLocation(Location location1, Location location2){
 
         if(location1.getWorld() == location2.getWorld() && location1.getX() == location2.getX() && location1.getY() == location1.getY() && location1.getZ() == location2.getZ()){
             return true;
@@ -205,6 +208,52 @@ public class CheckUtil {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 選択した２箇所の座標が隣接している場合、走行する方角を送信。
+     * -1:隣接していない 1:北 2:南 3:東 4:西
+     * 隣接していない場合、nullを返す
+     * @param selectPositionModel
+     * @return
+     */
+    public int checkPositionAdjacent(SelectPositionModel selectPositionModel){
+
+        //pos1とpos2が同一
+        if(checkSameLocation(new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos1X(), selectPositionModel.getPos1Y(), selectPositionModel.getPos1Z()), new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos2X(), selectPositionModel.getPos2Y(), selectPositionModel.getPos2Z()))){
+            return -1;
+        }
+        //Y座標が違う
+        if(selectPositionModel.getPos1Y() != selectPositionModel.getPos2Y()){
+            return -1;
+        }
+
+        //隣接チェック
+        if(Math.abs(selectPositionModel.getPos1X() - selectPositionModel.getPos2X()) != 1 && selectPositionModel.getPos1Z() == selectPositionModel.getPos2Z()){
+            return -1;
+        }
+        if(Math.abs(selectPositionModel.getPos1Z() - selectPositionModel.getPos2Z()) != 1 && selectPositionModel.getPos1X() == selectPositionModel.getPos2X()){
+            return -1;
+        }
+
+        //北
+        if(selectPositionModel.getPos1Z() - selectPositionModel.getPos2Z() == -1){
+            return 1;
+        }
+        //南
+        if(selectPositionModel.getPos1Z() - selectPositionModel.getPos2Z() == 1){
+            return 2;
+        }
+        //東
+        if(selectPositionModel.getPos1X() - selectPositionModel.getPos2X() == 1){
+            return 3;
+        }
+        //西
+        if(selectPositionModel.getPos1X() - selectPositionModel.getPos2X() == -1){
+            return 4;
+        }
+
+        return -1;
     }
 
 }

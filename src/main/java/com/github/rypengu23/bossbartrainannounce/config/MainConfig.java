@@ -27,6 +27,9 @@ public class MainConfig {
     //乗り換え判定距離
     private int transferRange;
 
+    //アナウンス送信間隔
+    private long announceInterval;
+
     MainConfig(Configuration config){
         version = config.getDouble("version");
         language = config.getString("language");
@@ -41,6 +44,8 @@ public class MainConfig {
         prefix = config.getString("setting.prefix");
 
         transferRange = config.getInt("setting.transferRange");
+
+        announceInterval = config.getLong("setting.announceInterval");
     }
 
     public Map getConfigTypeList() {
@@ -58,6 +63,8 @@ public class MainConfig {
         map.put("setting.prefix", "String");
 
         map.put("setting.transferRange", "int");
+
+        map.put("setting.announceInterval", "int");
 
 
         return map;

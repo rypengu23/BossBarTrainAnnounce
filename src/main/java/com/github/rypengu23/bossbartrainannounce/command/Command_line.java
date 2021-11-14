@@ -211,7 +211,7 @@ public class Command_line {
 
         if(lineDao.insertLine(new LineModel(player.getUniqueId().toString() ,lineNameJp, lineNameEn, lineColor, typeHashMap, loopFlag)) > 0){
             player.sendMessage("§a["+ mainConfig.getPrefix() +"] §f路線を登録しました！");
-            player.sendMessage("§f路線名: "+ lineNameJp);
+            player.sendMessage("§f路線名(和名): "+ lineNameJp +" §f路線名(英語): "+ lineNameEn);
             return true;
         }
 
@@ -326,7 +326,7 @@ public class Command_line {
         if(lineDao.changeLineName(player.getUniqueId().toString(), oldLineName, newLineNameJP, newLineNameEN) > 0){
 
             player.sendMessage("§a["+ mainConfig.getPrefix() +"] §f路線名を変更しました！");
-            player.sendMessage("§f旧路線名: "+ oldLineName +" 新路線名: "+ newLineNameJP);
+            player.sendMessage("§f旧路線名: "+ oldLineName +" 新路線名(和名): "+ newLineNameJP+" 新路線名(英語): "+ newLineNameEN);
 
             //アナウンス情報テーブルも更新
             announceInfoDao.changeLineName(player.getUniqueId().toString(), oldLineName, newLineNameJP);
@@ -445,7 +445,7 @@ public class Command_line {
         if(lineDao.changeLineInfo(player.getUniqueId().toString(), lineModel) > 0){
 
             player.sendMessage("§a["+ mainConfig.getPrefix() +"] §f種別を追加しました！");
-            player.sendMessage("§f新規種別: "+ typeJP);
+            player.sendMessage("§f新規種別(和名): "+ typeJP +" §f新規種別(英語): "+ typeEN);
             return true;
         }
 

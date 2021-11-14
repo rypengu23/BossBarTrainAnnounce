@@ -354,7 +354,7 @@ public class StationDao {
             insertSql.append("POS2X = ?, ");
             insertSql.append("POS2Y = ?, ");
             insertSql.append("POS2Z = ?, ");
-            insertSql.append("NUMBER = ?　");
+            insertSql.append("NUMBER = ? ");
             insertSql.append("WHERE ");
             insertSql.append("UUID = ? AND ");
             insertSql.append("LINE_NAME = ? AND ");
@@ -363,6 +363,7 @@ public class StationDao {
             insertSql.append("NAME_KATAKANA = ?) ");
 
             PreparedStatement ps = connection.prepareStatement(insertSql.toString());
+            System.out.println(insertSql.toString());
             ps.setString(p++, stationModel.getSelectPositionModel().getWorldName());
             ps.setInt(p++, stationModel.getSelectPositionModel().getPos1X());
             ps.setInt(p++, stationModel.getSelectPositionModel().getPos1Y());

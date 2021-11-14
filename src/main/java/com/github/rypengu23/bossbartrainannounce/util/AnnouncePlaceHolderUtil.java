@@ -1,8 +1,5 @@
 package com.github.rypengu23.bossbartrainannounce.util;
 
-import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
-import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
-import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.dao.LineDao;
 import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
 import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
@@ -14,16 +11,19 @@ import java.util.ArrayList;
 public class AnnouncePlaceHolderUtil {
 
     private LineModel lineModel;
-    private LineModel viaLineModel;
+    private ArrayList<LineModel> viaLineModelList = new ArrayList<>();
     private StationModel stationModel;
     private AnnounceInfoModel announceInfoModel;
-    private ArrayList<LineModel> transferLineList;
+    private ArrayList<LineModel> transferLineList = new ArrayList<>();
 
     private String transferJP;
     private String transferEN;
 
     private String typeJP;
     private String typeEN;
+
+    private String viaLineNameJP;
+    private String viaLineNameEN;
 
     public AnnouncePlaceHolderUtil(LineModel lineModel, StationModel stationModel, AnnounceInfoModel announceInfoModel){
 
@@ -34,9 +34,45 @@ public class AnnouncePlaceHolderUtil {
         //直通先情報を取得
         LineDao lineDao = new LineDao();
         if(announceInfoModel.getViaLineNameJP() != null) {
-            this.viaLineModel = lineDao.getLine(lineModel.getUUID(), announceInfoModel.getViaLineNameJP());
+
+            //直通先をリスト化
+            String[] throughServiceList = announceInfoModel.getViaLineNameJP().split(",");
+            String[] throughLineOwnerList = announceInfoModel.getViaLineOwnerUUID().split(",");
+
+            //直通先路線とオーナーの個数チェック
+            if (throughLineOwnerList.length == throughServiceList.length) {
+
+                for (int i = 0; i < throughLineOwnerList.length; i++) {
+                    //LineModelでリスト化
+                    viaLineModelList.add(lineDao.getLine(throughLineOwnerList[i], throughServiceList[i]));
+                }
+
+                //直通先を連結
+                StringBuilder throughLineNameJP = new StringBuilder();
+                StringBuilder throughLineNameEN = new StringBuilder();
+
+                for (int i = 0; i < viaLineModelList.size(); i++) {
+                    if (i == 0) {
+                        throughLineNameEN.append("the ");
+                    } else if (i + 1 != viaLineModelList.size()) {
+                        throughLineNameJP.append("・");
+                        throughLineNameEN.append(", the ");
+                    } else {
+                        throughLineNameJP.append("・");
+                        throughLineNameEN.append(" and the ");
+                    }
+                    throughLineNameJP.append(viaLineModelList.get(i).getLineNameJP());
+                    throughLineNameEN.append(viaLineModelList.get(i).getLineNameEN());
+                }
+                viaLineNameJP = throughLineNameJP.toString();
+                viaLineNameEN = throughLineNameEN.toString();
+
+            }else{
+                viaLineModelList = null;
+            }
+
         }else{
-            this.viaLineModel = null;
+            viaLineModelList = null;
         }
 
         //乗り換え先リストを取得
@@ -89,9 +125,9 @@ public class AnnouncePlaceHolderUtil {
         word = word.replace("{LineNameJP}", lineModel.getLineNameJP());
         word = word.replace("{LineNameEN}", lineModel.getLineNameEN());
 
-        if(viaLineModel != null) {
-            word = word.replace("{ViaLineNameJP}", viaLineModel.getLineNameJP());
-            word = word.replace("{ViaLineNameEN}", viaLineModel.getLineNameEN());
+        if(viaLineModelList != null) {
+            word = word.replace("{ViaLineNameJP}", viaLineNameJP);
+            word = word.replace("{ViaLineNameEN}", viaLineNameEN);
         }else{
             word = word.replace("{ViaLineNameJP}", "");
             word = word.replace("{ViaLineNameEN}", "");
@@ -123,6 +159,14 @@ public class AnnouncePlaceHolderUtil {
         }else{
             word = word.replace("{TransferJP}", "");
             word = word.replace("{TransferEN}", "");
+        }
+
+        if(stationModel.getNumber() != null) {
+            word = word.replace("{Number}", stationModel.getNumber());
+            word = word.replace("{BracketsNumber}", "("+ stationModel.getNumber() +")");
+        }else{
+            word = word.replace("{Number}", "");
+            word = word.replace("{BracketsNumber}", "");
         }
 
         word = convertUtil.removeLocalService(word);
