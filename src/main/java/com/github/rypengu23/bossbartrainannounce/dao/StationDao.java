@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class StationDao {
 
@@ -30,10 +31,10 @@ public class StationDao {
      *
      * @return
      */
-    public ArrayList<StationModel> getStationListAll() {
+    public HashSet<StationModel> getStationListAll() {
         ConnectDao connectDao = new ConnectDao();
         Connection connection = connectDao.getConnection();
-        ArrayList<StationModel> resultList = new ArrayList<>();
+        HashSet<StationModel> resultList = new HashSet<>();
 
         try {
             int p = 1;

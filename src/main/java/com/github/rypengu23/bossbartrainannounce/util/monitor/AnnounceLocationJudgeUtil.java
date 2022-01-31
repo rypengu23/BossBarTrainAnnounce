@@ -1,4 +1,4 @@
-package com.github.rypengu23.bossbartrainannounce.util;
+package com.github.rypengu23.bossbartrainannounce.util.monitor;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
 import com.github.rypengu23.bossbartrainannounce.dao.AnnounceInfoDao;
@@ -6,6 +6,7 @@ import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class AnnounceLocationJudgeUtil {
 
@@ -21,7 +22,7 @@ public class AnnounceLocationJudgeUtil {
      */
     public boolean checkAnnouncePosition(Location location){
 
-        ArrayList<AnnounceInfoModel> announceInfoListWork = BossBarTrainAnnounce.announceInfoList;
+        HashSet<AnnounceInfoModel> announceInfoListWork = BossBarTrainAnnounce.announceInfoList;
 
         for(AnnounceInfoModel announceInfo:announceInfoListWork){
             boolean resultFlag = true;

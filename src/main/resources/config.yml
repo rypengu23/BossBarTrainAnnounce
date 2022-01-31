@@ -2,11 +2,12 @@
 #  BossBarTrainAnnounce
 # =======================================
 # @author     rypengu23
-# @copyright  Copyright ryoengu23 2021
+# @copyright  Copyright ryoengu23 2021-2022
 version: 1.1
 language: "ja"
 # =======================================
 
+# Database connection settings(Only MySQL is supported)
 # DB接続先情報
 # MySQLのみ対応
 
@@ -16,18 +17,64 @@ database:
  user: "user"
  password: "password"
 
+# Items for coordinate selection.
 # ポジションセット用アイテム
 # アナウンス地点の選択時に使用するアイテムを選択
 select:
   item: "GOLDEN_AXE"
 
+# Speedup setting
+# 高速化設定
+speedUp:
+ # Availability of the trolley speed-up function.
+ # トロッコ高速化機能の利用可否
+ # true:使用 false:使用しない
+ useMinecartSpeedUp: false
+
+ # Default value for driving mode.
+ # 走行モードの既定値
+ # true:高速モード false:通常モード
+ defaultMode: true
+
+ # Whether to allow the user to change the driving mode.
+ # ユーザーによる高速モードの変更を許可するかどうか
+ # true:許可 false:許可しない
+ allowChangeModeForPlayer: true
+
+ # Speed at high trolley speed (ticks per meter)
+ # トロッコ高速時の速度(tick毎メートル)
+ # 0.5以上に設定されている場合、バニラ高速鉄道を走行中は0.5が最高速度に設定される。
+ # バニラの速度は0.4(8ブロック/s)
+ maxMinecartSpeed: 0.8
+
+ # When driving at high speed, how many times faster should the transmission speed of each announcement be.
+ # 高速走行時、アナウンス1通ごとの送信速度を何倍に早めるか
+ # アナウンス速度高速化フラグを設定している場合、announceIntervalOfFastFlagの値を基準に早める
+ announceMagnification: 1.0
+
+ # Improve the detection accuracy of announcement location(Set to true if you are using other rail speedup plugins)
+ # アナウンスロケーションの検知精度を高めるか
+ # 他の鉄道高速化プラグインを利用している場合、trueに設定
+ useSpeedUpPlugin: false
+
+
+# Other settings
 # その他設定
 setting:
+ # Prefix for sending commands.
+ # コマンド送信時の接頭辞
  prefix: "BBTA"
 
- # 乗り換え取得半径
+ # Transit acquisition radius (square).
+ # 乗り換え取得半径(正方形)
  transferRange: 200
 
+ # Announcement transmission interval (tick)
  # アナウンス送信間隔(tick)
  # アナウンス1通1通の間隔を設定
- announceInterval: 50L
+ # 通常時
+ announceInterval: 50
+ # アナウンス速度高速化フラグ設定時
+ announceIntervalOfFastFlag: 25
+
+

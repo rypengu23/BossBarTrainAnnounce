@@ -1,10 +1,20 @@
 package com.github.rypengu23.bossbartrainannounce.util;
 
+import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
 import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
+import org.bukkit.entity.Player;
 
 public class SelectUtil {
 
     public SelectUtil() {
+    }
+
+    public void initPlayerData(Player player){
+        BossBarTrainAnnounce.selectPosition.put(player.getUniqueId(), new SelectPositionModel());
+    }
+
+    public void unloadPlayerData(Player player){
+        BossBarTrainAnnounce.selectPosition.remove(player.getUniqueId());
     }
 
     /**

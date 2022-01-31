@@ -5,17 +5,14 @@ import com.github.rypengu23.bossbartrainannounce.config.CommandMessage;
 import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
 import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
 import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
-import com.github.rypengu23.bossbartrainannounce.dao.AnnounceInfoDao;
-import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
-import com.github.rypengu23.bossbartrainannounce.util.CheckUtil;
-import com.github.rypengu23.bossbartrainannounce.util.ConvertUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
 import com.github.rypengu23.bossbartrainannounce.util.SelectUtil;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Command_select {
 
@@ -97,6 +94,7 @@ public class Command_select {
     public boolean selectPosition(Player player, int pos1OrPos2, String x, String y, String z){
 
         CheckUtil checkUtil = new CheckUtil();
+        UUID uuid = player.getUniqueId();
 
         //権限チェック
         if(!player.hasPermission("bossBarTrainAnnounce.select")){
@@ -115,12 +113,12 @@ public class Command_select {
         int numZ = Integer.parseInt(z);
 
         //ポジションリストに登録されていない場合、登録
-        if(!BossBarTrainAnnounce.selectPosition.containsKey(player)){
-            BossBarTrainAnnounce.selectPosition.put(player, new SelectPositionModel());
+        if(!BossBarTrainAnnounce.selectPosition.containsKey(uuid)){
+            BossBarTrainAnnounce.selectPosition.put(uuid, new SelectPositionModel());
         }
 
         //ポジションを記録
-        SelectPositionModel oldSelectPosition = BossBarTrainAnnounce.selectPosition.get(player);
+        SelectPositionModel oldSelectPosition = BossBarTrainAnnounce.selectPosition.get(uuid);
         SelectPositionModel newSelectPosition = new SelectPositionModel();
 
         if(pos1OrPos2 == 0){
@@ -154,7 +152,7 @@ public class Command_select {
             }
         }
 
-        BossBarTrainAnnounce.selectPosition.put(player, newSelectPosition);
+        BossBarTrainAnnounce.selectPosition.put(uuid, newSelectPosition);
 
         //ブロック数計算
         if(checkUtil.checkSelectPositionALL(player)) {

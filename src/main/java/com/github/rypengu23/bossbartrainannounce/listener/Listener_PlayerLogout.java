@@ -1,11 +1,9 @@
 package com.github.rypengu23.bossbartrainannounce.listener;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
-import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
-import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
-import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.util.BossBarUtil;
-import com.github.rypengu23.bossbartrainannounce.util.TaskUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.MemoryUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.TaskUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,6 +22,7 @@ public class Listener_PlayerLogout implements Listener {
         Player player = event.getPlayer();
         BossBarUtil bossBarUtil = new BossBarUtil();
         TaskUtil taskUtil = new TaskUtil();
+        MemoryUtil memoryUtil = new MemoryUtil();
 
         //タスク終了
         taskUtil.removeTask(player);
@@ -31,8 +30,8 @@ public class Listener_PlayerLogout implements Listener {
         taskUtil.removeMonitorList(player);
         //ボスバー削除
         bossBarUtil.removeBossBar(player);
-        //セレクトポジション削除
-        BossBarTrainAnnounce.selectPosition.remove(player);
+        //メモリ削除
+        memoryUtil.unloadMemory(player);
     }
 }
 

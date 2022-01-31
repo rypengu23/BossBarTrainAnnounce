@@ -6,12 +6,14 @@ import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
 import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.dao.AnnounceInfoDao;
 import com.github.rypengu23.bossbartrainannounce.dao.LineDao;
+import com.github.rypengu23.bossbartrainannounce.dao.PlayerDataDao;
 import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
 import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import com.github.rypengu23.bossbartrainannounce.model.LineModel;
+import com.github.rypengu23.bossbartrainannounce.model.PlayerDataModel;
 import com.github.rypengu23.bossbartrainannounce.model.StationModel;
-import com.github.rypengu23.bossbartrainannounce.util.CheckUtil;
-import com.github.rypengu23.bossbartrainannounce.util.ConvertUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.ConvertUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -39,8 +41,12 @@ public class Command_info {
         ConvertUtil convertUtil = new ConvertUtil();
         Player player = (Player)sender;
 
+        //プレイヤー情報
+        if(args.length == 1) {
+            infomationOfPlayer(player);
+
         //フラグ
-        if(args[1].equalsIgnoreCase("line")){
+        }else if(args[1].equalsIgnoreCase("line")){
 
             if(args.length == 3){
                 //路線情報
@@ -94,6 +100,31 @@ public class Command_info {
         commandList.add("info");
 
         return commandList.contains(command.toLowerCase());
+    }
+
+    private boolean infomationOfPlayer(Player player){
+
+        //権限チェック
+        if(!player.hasPermission("bossBarTrainAnnounce.info")){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandDoNotHavePermission);
+            return false;
+        }
+
+        PlayerDataDao playerDataDao = new PlayerDataDao();
+        PlayerDataModel playerData = playerDataDao.getPlayerData(player.getUniqueId().toString());
+
+        if(playerData == null){
+            return false;
+        }
+
+        ConvertUtil convertUtil = new ConvertUtil();
+        player.sendMessage("§a["+ mainConfig.getPrefix() +"] "+ convertUtil.placeholderUtil("{player}", player.getName(), CommandMessage.Command_Info_SHOWSTATUS1));
+        player.sendMessage("§a["+ mainConfig.getPrefix() +"] "+ convertUtil.placeholderUtil("{speed}", convertUtil.convertBooleanToString(playerData.isSpeedUpFlag()), CommandMessage.Command_Info_SHOWSTATUS2));
+        player.sendMessage("§a["+ mainConfig.getPrefix() +"] "+ convertUtil.placeholderUtil("{bossbar}", convertUtil.convertBooleanToString(playerData.isShowBossBar()), CommandMessage.Command_Info_SHOWSTATUS3));
+        player.sendMessage("§a["+ mainConfig.getPrefix() +"] "+ convertUtil.placeholderUtil("{announce}", convertUtil.convertBooleanToString(playerData.isShowChatAnnounce()), CommandMessage.Command_Info_SHOWSTATUS4));
+        player.sendMessage("§a["+ mainConfig.getPrefix() +"] "+ CommandMessage.Command_Info_SHOWSTATUS5);
+
+        return true;
     }
 
     /**

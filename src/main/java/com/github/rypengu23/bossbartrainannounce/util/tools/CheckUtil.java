@@ -1,9 +1,12 @@
-package com.github.rypengu23.bossbartrainannounce.util;
+package com.github.rypengu23.bossbartrainannounce.util.tools;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
 import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.Rail;
 import org.bukkit.entity.Player;
 
 import java.util.regex.Matcher;
@@ -188,7 +191,7 @@ public class CheckUtil {
      * @param location2
      * @return
      */
-    public static boolean checkSameLocation(Location location1, Location location2){
+    public boolean checkSameLocation(Location location1, Location location2){
 
         if(location1.getWorld() == location2.getWorld() && location1.getX() == location2.getX() && location1.getY() == location1.getY() && location1.getZ() == location2.getZ()){
             return true;
@@ -212,16 +215,18 @@ public class CheckUtil {
 
     /**
      * 選択した２箇所の座標が隣接している場合、走行する方角を送信。
-     * -1:隣接していない 1:北 2:南 3:東 4:西
+     * -1:隣接していない 0:同じ座標 1:北 2:南 3:東 4:西
      * 隣接していない場合、nullを返す
      * @param selectPositionModel
      * @return
      */
     public int checkPositionAdjacent(SelectPositionModel selectPositionModel){
 
+        System.out.println("x:"+ selectPositionModel.getPos1X() +" y:"+ selectPositionModel.getPos1Y() +" z:"+ selectPositionModel.getPos1Z() +" x:"+ selectPositionModel.getPos2X() + " y:"+ selectPositionModel.getPos2Y() +" z:"+ selectPositionModel.getPos2Z());
+
         //pos1とpos2が同一
         if(checkSameLocation(new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos1X(), selectPositionModel.getPos1Y(), selectPositionModel.getPos1Z()), new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos2X(), selectPositionModel.getPos2Y(), selectPositionModel.getPos2Z()))){
-            return -1;
+            return 0;
         }
         //Y座標が違う
         if(selectPositionModel.getPos1Y() != selectPositionModel.getPos2Y()){
@@ -254,6 +259,112 @@ public class CheckUtil {
         }
 
         return -1;
+    }
+
+    /**
+     * 選択した２箇所の座標を比較し、走行する方角を送信。
+     * -1:斜め 0:同じ座標 1:北 2:南 3:東 4:西
+     * @param selectPositionModel
+     * @return
+     */
+    public int checkDirection(SelectPositionModel selectPositionModel){
+
+        System.out.println("x:"+ selectPositionModel.getPos1X() +" y:"+ selectPositionModel.getPos1Y() +" z:"+ selectPositionModel.getPos1Z() +" x:"+ selectPositionModel.getPos2X() + " y:"+ selectPositionModel.getPos2Y() +" z:"+ selectPositionModel.getPos2Z());
+
+        //pos1とpos2が同一
+        if(checkSameLocation(new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos1X(), selectPositionModel.getPos1Y(), selectPositionModel.getPos1Z()), new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos2X(), selectPositionModel.getPos2Y(), selectPositionModel.getPos2Z()))){
+            return 0;
+        }
+        //Y座標が違う
+        if(selectPositionModel.getPos1Y() != selectPositionModel.getPos2Y()){
+            return -1;
+        }
+
+        //北
+        if(selectPositionModel.getPos1X() == selectPositionModel.getPos2X() && selectPositionModel.getPos1Z() - selectPositionModel.getPos2Z() < 0){
+            return 1;
+        }
+        //南
+        if(selectPositionModel.getPos1X() == selectPositionModel.getPos2X() && selectPositionModel.getPos1Z() - selectPositionModel.getPos2Z() > 0){
+            return 2;
+        }
+        //東
+        if(selectPositionModel.getPos1Z() == selectPositionModel.getPos2Z() && selectPositionModel.getPos1X() - selectPositionModel.getPos2X() > 0){
+            return 3;
+        }
+        //西
+        if(selectPositionModel.getPos1Z() == selectPositionModel.getPos2Z() && selectPositionModel.getPos1X() - selectPositionModel.getPos2X() < 0){
+            return 4;
+        }
+
+        return -1;
+    }
+
+    /**
+     * 1ブロック先のブロックをチェックしてトロッコの減速が必要か判定する
+     * 0:制限しない 1:制限 2:カーブレール制限(最大0.5)
+     * @param vehicleLocation
+     * @param before1Location
+     */
+    public int checkHighSpeedMinecartDecelerate(Location vehicleLocation, Location before1Location){
+
+        if(before1Location == null){
+            return 0;
+        }
+
+        //走行中の方角を確認
+        int direction = checkDirection(new SelectPositionModel(vehicleLocation.getWorld().getName(), vehicleLocation.getBlockX(), vehicleLocation.getBlockY(), vehicleLocation.getBlockZ(), before1Location.getBlockX(), before1Location.getBlockY(), before1Location.getBlockZ()));
+
+        System.out.println(direction);
+        //1ブロック先のブロックを取得
+        Location after1BlockLocation = vehicleLocation.clone();
+        if(direction == 1){
+            after1BlockLocation.add(0,0,-1);
+        }else if(direction == 2){
+            after1BlockLocation.add(0,0,1);
+        }else if(direction == 3){
+            after1BlockLocation.add(1,0,0);
+        }else if(direction == 4){
+            after1BlockLocation.add(-1,0,0);
+        }else{
+            return 1;
+        }
+
+        //1ブロック先のブロックがレールかどうか
+        Block after1Block = after1BlockLocation.getBlock();
+        if(!(after1Block.getType()==Material.RAIL || after1Block.getType()==Material.ACTIVATOR_RAIL || after1Block.getType()==Material.DETECTOR_RAIL || after1Block.getType()==Material.POWERED_RAIL)){
+            //レールでは無い、あるいは坂道等のため減速判定
+            return 1;
+        }
+
+        //1ブロック先のレールが直線か
+        Rail after1Rail = (Rail) after1Block.getBlockData();
+        Rail.Shape after1Shape = after1Rail.getShape();
+
+        if(after1Shape.equals(Rail.Shape.NORTH_SOUTH) && (direction == 1 || direction == 2)){
+            return 0;
+        }else if(after1Shape.equals(Rail.Shape.EAST_WEST) && (direction == 3 || direction == 4)){
+            return 0;
+        }
+
+        //1ブロック先のレールが上昇レールか
+        if(after1Shape.equals(Rail.Shape.ASCENDING_NORTH) || after1Shape.equals(Rail.Shape.ASCENDING_SOUTH) || after1Shape.equals(Rail.Shape.ASCENDING_EAST) || after1Shape.equals(Rail.Shape.ASCENDING_WEST)){
+            return 1;
+        }
+
+        //カーブの場合、カーブ通過後に方角が変わる場合は速度抑制しない
+        if(direction==1 && (after1Shape.equals(Rail.Shape.NORTH_EAST) || after1Shape.equals(Rail.Shape.NORTH_WEST))){
+            return 2;
+        }else if(direction==2 && (after1Shape.equals(Rail.Shape.SOUTH_EAST) || after1Shape.equals(Rail.Shape.SOUTH_WEST))){
+            return 2;
+        }else if(direction==3 && (after1Shape.equals(Rail.Shape.NORTH_EAST) || after1Shape.equals(Rail.Shape.SOUTH_EAST))){
+            return 2;
+        }else if(direction==4 && (after1Shape.equals(Rail.Shape.NORTH_WEST) || after1Shape.equals(Rail.Shape.SOUTH_WEST))){
+            return 2;
+        }else{
+            return 1;
+        }
+
     }
 
 }

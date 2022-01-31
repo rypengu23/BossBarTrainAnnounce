@@ -10,16 +10,18 @@ public class LineModel {
     private String lineColor;
     private HashMap<String,String> type;
     private boolean loop;
+    private boolean subway;
 
     public LineModel(){}
 
-    public LineModel(String UUID, String lineNameJP, String lineNameEN, String lineColor, HashMap<String, String> type, boolean loop) {
+    public LineModel(String UUID, String lineNameJP, String lineNameEN, String lineColor, HashMap<String, String> type, boolean loop, boolean subway) {
         this.UUID = UUID;
         this.lineNameJP = lineNameJP;
         this.lineNameEN = lineNameEN;
         this.lineColor = lineColor;
         this.type = type;
         this.loop = loop;
+        this.subway = subway;
     }
 
     /**
@@ -125,5 +127,13 @@ public class LineModel {
 
     public void setLoop(boolean loop) {
         this.loop = loop;
+    }
+
+    public boolean isSubway() {
+        return subway;
+    }
+
+    public void setSubway(boolean subway) {
+        this.subway = subway;
     }
 }

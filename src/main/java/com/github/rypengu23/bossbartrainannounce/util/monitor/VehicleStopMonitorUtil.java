@@ -1,18 +1,24 @@
-package com.github.rypengu23.bossbartrainannounce.util;
+package com.github.rypengu23.bossbartrainannounce.util.monitor;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
 import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
 import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
 import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
+import com.github.rypengu23.bossbartrainannounce.model.PlayerDataModel;
 import com.github.rypengu23.bossbartrainannounce.model.StationModel;
+import com.github.rypengu23.bossbartrainannounce.util.BossBarUtil;
+import com.github.rypengu23.bossbartrainannounce.util.monitor.StationLocationJudgeUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Boss;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class VehicleStopMonitorUtil {
 
@@ -47,6 +53,7 @@ public class VehicleStopMonitorUtil {
                         continue;
                     }
 
+                    UUID uuid = player.getUniqueId();
                     //現在地が駅内か確認
                     //駅内に居ない場合、次のプレイヤーへ
                     StationLocationJudgeUtil stationLocationJudgeUtil = new StationLocationJudgeUtil();
@@ -70,20 +77,24 @@ public class VehicleStopMonitorUtil {
                             //動いていたので、ロケーションリストを更新する
                             playerLocationList.put(player, player.getVehicle().getLocation());
 
-                            BossBarTrainAnnounce.stopInStationPlayerList.remove(player);
+                            BossBarTrainAnnounce.stopInStationPlayerList.remove(uuid);
                             continue;
 
-                        } else if(!BossBarTrainAnnounce.stopInStationPlayerList.contains(player)) {
+                        } else if(!BossBarTrainAnnounce.stopInStationPlayerList.contains(uuid)) {
                             //動いていないので、BossBarをセット
 
                             //停車中ステータス設定
-                            BossBarTrainAnnounce.stopInStationPlayerList.add(player);
+                            BossBarTrainAnnounce.stopInStationPlayerList.add(uuid);
 
+                            //プレイヤー情報取得
+                            PlayerDataModel playerData = BossBarTrainAnnounce.playerDataList.get(uuid);
                             //駅情報取得
                             StationDao stationDao = new StationDao();
                             StationModel stationModel = stationDao.getStationForCoordinate(player.getVehicle().getLocation());
-                            BossBarUtil bossBar = new BossBarUtil();
-                            bossBar.setBossBar(2, player, null, stationModel);
+                            if (playerData.isShowBossBar()) {
+                                BossBarUtil bossBar = new BossBarUtil();
+                                bossBar.setBossBar(2, player, null, stationModel);
+                            }
                         }
                     }
                 }

@@ -11,8 +11,10 @@ import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
 import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
 import com.github.rypengu23.bossbartrainannounce.model.StationModel;
-import com.github.rypengu23.bossbartrainannounce.util.*;
 
+import com.github.rypengu23.bossbartrainannounce.util.monitor.AnnounceLocationJudgeUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.ConvertUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -158,7 +160,6 @@ public class Command_announce {
         }else{
             //種別名を漢字に変換
             type = lineDao.getTypeJP(player.getUniqueId().toString(), lineName, type);
-            System.out.println(type);
         }
 
         //次駅名存在チェック
@@ -185,7 +186,7 @@ public class Command_announce {
             return false;
         }
 
-        if(announceInfoDao.insertAnnounceInfo(new AnnounceInfoModel(player.getUniqueId().toString(), nextOrSoon, selectPosition.getWorldName(), selectPosition.getPos1X(), selectPosition.getPos1Y(), selectPosition.getPos1Z(), stationNameKanji, lineName, null, null, type, exit, false, 0,null,  null, false, 0, 0, 0,0)) > 0){
+        if(announceInfoDao.insertAnnounceInfo(new AnnounceInfoModel(player.getUniqueId().toString(), nextOrSoon, selectPosition.getWorldName(), selectPosition.getPos1X(), selectPosition.getPos1Y(), selectPosition.getPos1Z(), stationNameKanji, lineName, null, null, type, exit, false, 0,null,  null, false, 0, 0, 0,0,false)) > 0){
             //アナウンスロケーション情報のアップデート
             AnnounceLocationJudgeUtil announceLocationJudgeUtil = new AnnounceLocationJudgeUtil();
             announceLocationJudgeUtil.updateAnnounceListCache();

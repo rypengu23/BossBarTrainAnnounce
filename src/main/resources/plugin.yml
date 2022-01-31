@@ -1,7 +1,7 @@
 name: BossBarTrainAnnounce
 version: 1.0
 main: com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce
-api-version: 1.16
+api-version: 1.18
 authors: [ rypengu23 ]
 description: トロッコの自動アナウンスプラグイン
 
@@ -33,7 +33,9 @@ permissions:
       bossBarTrainAnnounce.info: true
       bossBarTrainAnnounce.registRedstone: true
       bossBarTrainAnnounce.removeRedstone: true
+      bossBarTrainAnnounce.registFastFlag: true
       bossBarTrainAnnounce.reload: true
+      bossBarTrainAnnounce.database: true
 
   bossBarTrainAnnounce.user:
     description: 自分の路線を登録・編集・削除
@@ -58,6 +60,7 @@ permissions:
       bossBarTrainAnnounce.registDirection: true
       bossBarTrainAnnounce.info: true
       bossBarTrainAnnounce.registRedstone: true
+      bossBarTrainAnnounce.registFastFlag: true
       bossBarTrainAnnounce.removeRedstone: true
 
   bossBarTrainAnnounce.select:
@@ -119,14 +122,23 @@ permissions:
     default: op
   bossBarTrainAnnounce.info:
     description: 情報表示
-    default: op
+    default: true
   bossBarTrainAnnounce.registRedstone:
     description: レッドストーン制御追加
     default: op
   bossBarTrainAnnounce.removeRedstone:
     description: レッドストーン制御解除
     default: op
+  bossBarTrainAnnounce.registFastFlag:
+    description: アナウンス速度アップフラグ設定
+    default: op
+  bossBarTrainAnnounce.toggleSetting:
+    description: 個人設定
+    default: true
   bossBarTrainAnnounce.reload:
     description: Configリロード
+    default: op
+  bossBarTrainAnnounce.database:
+    description: Database操作
     default: op
 

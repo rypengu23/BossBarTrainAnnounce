@@ -1,21 +1,18 @@
 package com.github.rypengu23.bossbartrainannounce.listener;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
+import com.github.rypengu23.bossbartrainannounce.model.PlayerDataModel;
 import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
 import com.github.rypengu23.bossbartrainannounce.util.*;
-import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
-import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
-import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.dao.AnnounceInfoDao;
 import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
 import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import com.github.rypengu23.bossbartrainannounce.model.StationModel;
+import com.github.rypengu23.bossbartrainannounce.util.monitor.AnnounceLocationJudgeUtil;
+import com.github.rypengu23.bossbartrainannounce.util.monitor.StationLocationJudgeUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.AnaloguePowerable;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -23,7 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 
-import java.util.HashMap;
+import java.util.UUID;
 
 public class Listener_VehicleMove implements Listener {
 
@@ -50,25 +47,26 @@ public class Listener_VehicleMove implements Listener {
         StationLocationJudgeUtil stationLocationJudgeUtil = new StationLocationJudgeUtil();
 
         Player player = (Player)event.getVehicle().getPassengers().get(0);
+        UUID uuid = player.getUniqueId();
         Vehicle vehicle = event.getVehicle();
         Location vehicleLocation = vehicle.getLocation();
 
         //プレイヤーが1マス動いたか確認する
         //プレイヤーロケーションリストに登録されているか
-        if(!BossBarTrainAnnounce.playerLocationList.containsKey(player.getUniqueId().toString())) {
+        if(!BossBarTrainAnnounce.playerLocationList.containsKey(uuid)) {
             //されていなければ新規追加
-            BossBarTrainAnnounce.playerLocationList.put(player.getUniqueId().toString(), vehicle.getLocation());
+            BossBarTrainAnnounce.playerLocationList.put(uuid, vehicle.getLocation());
         }else{
             //されていた場合 → 登録値を取得
-            Location playerLocationHistory = BossBarTrainAnnounce.playerLocationList.get(player.getUniqueId().toString());
+            Location playerLocationHistory = BossBarTrainAnnounce.playerLocationList.get(uuid);
             //登録値と現在地の値を比較 → 1マス以上動いていない場合、処理終了
             if(vehicleLocation.distance(playerLocationHistory) < 0.5){
                 return;
             }
 
             //1マス以上動いていたので、ロケーションリストを更新する
-            BossBarTrainAnnounce.playerBefore1BlockLocationList.put(player.getUniqueId().toString(), BossBarTrainAnnounce.playerLocationList.get(player.getUniqueId().toString()));
-            BossBarTrainAnnounce.playerLocationList.put(player.getUniqueId().toString(), vehicle.getLocation());
+            BossBarTrainAnnounce.playerBefore1BlockLocationList.put(uuid, BossBarTrainAnnounce.playerLocationList.get(uuid));
+            BossBarTrainAnnounce.playerLocationList.put(uuid, vehicle.getLocation());
 
         }
 
@@ -92,12 +90,12 @@ public class Listener_VehicleMove implements Listener {
 
             //駅内に居る場合
             //停車中または走行中判定
-            if(BossBarTrainAnnounce.moveInStationPlayerList.contains(player) && BossBarTrainAnnounce.lcdTask.containsKey(player)){
+            if(BossBarTrainAnnounce.moveInStationPlayerList.contains(uuid) && BossBarTrainAnnounce.lcdTask.containsKey(uuid)){
                 //既に駅内走行中の場合、処理終了
                 return;
             }else{
                 //駅内走行中新規処理
-                BossBarTrainAnnounce.moveInStationPlayerList.add(player);
+                BossBarTrainAnnounce.moveInStationPlayerList.add(uuid);
 
                 //停車中の駅情報取得
                 stationModel = stationDao.getStationForCoordinate(vehicleLocation);
@@ -106,7 +104,7 @@ public class Listener_VehicleMove implements Listener {
             }
         }else{
             //駅外に居る場合
-            BossBarTrainAnnounce.moveInStationPlayerList.remove(player);
+            BossBarTrainAnnounce.moveInStationPlayerList.remove(uuid);
             return;
         }
 
@@ -131,7 +129,7 @@ public class Listener_VehicleMove implements Listener {
         if(announceInfo != null) {
             if (announceInfo.getDirection() != 0) {
 
-                Location before1BlockLocation = BossBarTrainAnnounce.playerBefore1BlockLocationList.get(player.getUniqueId().toString());
+                Location before1BlockLocation = BossBarTrainAnnounce.playerBefore1BlockLocationList.get(uuid);
                 int direction = checkUtil.checkPositionAdjacent(new SelectPositionModel(player.getWorld().getName(), vehicle.getLocation().getBlockX(), vehicle.getLocation().getBlockY(), vehicle.getLocation().getBlockZ(), before1BlockLocation.getBlockX(), before1BlockLocation.getBlockY(), before1BlockLocation.getBlockZ()));
 
                 if(direction == -1){
@@ -144,19 +142,25 @@ public class Listener_VehicleMove implements Listener {
             }
         }
 
+        //プレイヤーデータ取得
+        PlayerDataModel playerDataModel = BossBarTrainAnnounce.playerDataList.get(uuid);
 
-        //BossBarのセット
-        BossBarUtil bossBarUtil = new BossBarUtil();
-        if(announceInfo != null) {
-            bossBarUtil.setBossBar(nextOrSoonOrStopOrMove, player, announceInfo, stationModel);
-        }else{
-            bossBarUtil.setBossBar(nextOrSoonOrStopOrMove, player, null, stationModel);
+        if(playerDataModel.isShowBossBar()) {
+            //BossBarのセット
+            BossBarUtil bossBarUtil = new BossBarUtil();
+            if (announceInfo != null) {
+                bossBarUtil.setBossBar(nextOrSoonOrStopOrMove, player, announceInfo, stationModel);
+            } else {
+                bossBarUtil.setBossBar(nextOrSoonOrStopOrMove, player, null, stationModel);
+            }
         }
 
-        if(nextOrSoonOrStopOrMove != 2 && nextOrSoonOrStopOrMove != 3) {
-            //チャットアナウンスの送信
-            AnnounceUtil announceUtil = new AnnounceUtil();
-            announceUtil.sendChatAnnounceOfNextSoon(announceInfo, player);
+        if(playerDataModel.isShowChatAnnounce()) {
+            if (nextOrSoonOrStopOrMove != 2 && nextOrSoonOrStopOrMove != 3) {
+                //チャットアナウンスの送信
+                AnnounceUtil announceUtil = new AnnounceUtil();
+                announceUtil.sendChatAnnounceOfNextSoon(announceInfo, player);
+            }
         }
     }
 }

@@ -5,8 +5,10 @@ import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
 import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import com.github.rypengu23.bossbartrainannounce.model.LineModel;
 import com.github.rypengu23.bossbartrainannounce.model.StationModel;
+import com.github.rypengu23.bossbartrainannounce.util.tools.ConvertUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class AnnouncePlaceHolderUtil {
 
@@ -33,7 +35,7 @@ public class AnnouncePlaceHolderUtil {
 
         //直通先情報を取得
         LineDao lineDao = new LineDao();
-        if(announceInfoModel.getViaLineNameJP() != null) {
+        if(announceInfoModel.getViaLineNameJP() != null && announceInfoModel.getViaLineOwnerUUID() != null) {
 
             //直通先をリスト化
             String[] throughServiceList = announceInfoModel.getViaLineNameJP().split(",");
@@ -210,9 +212,31 @@ public class AnnouncePlaceHolderUtil {
             if(lineInfo.size() != 2){
                 continue;
             }
-            resultList.add(lineDao.getLine(lineInfo.get(0), lineInfo.get(1)));
+            LineModel addLine = lineDao.getLine(lineInfo.get(0), lineInfo.get(1));
+            if(!checkDuplicateOfLine(resultList, addLine)) {
+                resultList.add(addLine);
+            }
         }
 
+        //重複排除
+        resultList = new ArrayList<>(new HashSet<>(resultList));
+
         return resultList;
+    }
+
+    /**
+     * 引数の路線リストに引数の路線名が含まれていた場合、trueを返す
+     * @param lineList
+     * @param checkLine
+     * @return
+     */
+    public boolean checkDuplicateOfLine(ArrayList<LineModel> lineList, LineModel checkLine){
+
+        for(LineModel work:lineList){
+            if(work.getLineNameJP().equalsIgnoreCase(checkLine.getLineNameJP()) && work.getUUID().equalsIgnoreCase(checkLine.getUUID())){
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,15 +1,13 @@
-package com.github.rypengu23.bossbartrainannounce.util;
+package com.github.rypengu23.bossbartrainannounce.util.monitor;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
-import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
-import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
-import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
 import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
 import com.github.rypengu23.bossbartrainannounce.model.StationModel;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
 import org.bukkit.Location;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class StationLocationJudgeUtil {
 
@@ -30,7 +28,7 @@ public class StationLocationJudgeUtil {
 
         CheckUtil checkUtil = new CheckUtil();
 
-        ArrayList<StationModel> stationInfoListWork = BossBarTrainAnnounce.stationInfoList;
+        HashSet<StationModel> stationInfoListWork = BossBarTrainAnnounce.stationInfoList;
 
         for(StationModel stationInfo:stationInfoListWork){
             boolean resultFlag = true;

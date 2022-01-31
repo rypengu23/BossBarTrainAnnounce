@@ -17,23 +17,24 @@ import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class BossBarUtil {
 
-    private final ConfigLoader configLoader;
     private final MainConfig mainConfig;
-    private MessageConfig messageConfig;
+    private final MessageConfig messageConfig;
 
     private ArrayList<String> lcdList = new ArrayList<>();
 
     public BossBarUtil() {
-        configLoader = new ConfigLoader();
+        ConfigLoader configLoader = new ConfigLoader();
         mainConfig = configLoader.getMainConfig();
         messageConfig = configLoader.getMessageConfig();
     }
 
     public void setBossBar(int nextOrSoonOrStopOrMove, Player player, AnnounceInfoModel announceInfoModel, StationModel stationModel) {
 
+        UUID uuid = player.getUniqueId();
 
         //delayTime
         int period = 1;
@@ -62,14 +63,14 @@ public class BossBarUtil {
         }
 
         //BossBarの作成
-        NamespacedKey namespacedKey = NamespacedKey.fromString(player.getUniqueId().toString());
+        NamespacedKey namespacedKey = NamespacedKey.fromString(uuid.toString());
         if (namespacedKey == null) {
             return;
         }
         //ボスバーが既に表示されている場合 → 消さずにタスクを止める
-        if (BossBarTrainAnnounce.lcdTask.containsKey(player)) {
+        if (BossBarTrainAnnounce.lcdTask.containsKey(uuid)) {
 
-            BossBarTrainAnnounce.lcdTask.get(player).cancel();
+            BossBarTrainAnnounce.lcdTask.get(uuid).cancel();
         }
 
         KeyedBossBar bossBar;
@@ -119,7 +120,7 @@ public class BossBarUtil {
             }
         };
 
-        BossBarTrainAnnounce.lcdTask.put(player, Bukkit.getServer().getScheduler().runTaskTimer(BossBarTrainAnnounce.getInstance(), bossBarLCDAnimation, 0, period));
+        BossBarTrainAnnounce.lcdTask.put(uuid, Bukkit.getServer().getScheduler().runTaskTimer(BossBarTrainAnnounce.getInstance(), bossBarLCDAnimation, 0, period));
     }
 
     /**

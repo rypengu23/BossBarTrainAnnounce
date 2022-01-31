@@ -5,7 +5,7 @@ import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
 import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
 import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
-import com.github.rypengu23.bossbartrainannounce.util.CheckUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
 import com.github.rypengu23.bossbartrainannounce.util.SelectUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,7 +18,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-import java.awt.*;
+import java.util.UUID;
 
 public class Listener_Select implements Listener {
 
@@ -46,6 +46,7 @@ public class Listener_Select implements Listener {
         updateConfig();
         CheckUtil checkUtil = new CheckUtil();
         Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
         int hand = 0;
 
         //ブロックをクリックか判定
@@ -73,7 +74,7 @@ public class Listener_Select implements Listener {
 
         //ポジションリストに登録されていない場合、登録
         if(!BossBarTrainAnnounce.selectPosition.containsKey(player)){
-            BossBarTrainAnnounce.selectPosition.put(player, new SelectPositionModel());
+            BossBarTrainAnnounce.selectPosition.put(uuid, new SelectPositionModel());
         }
 
         //ポジションを記録
@@ -123,7 +124,7 @@ public class Listener_Select implements Listener {
             }
         }
 
-        BossBarTrainAnnounce.selectPosition.put(player, newSelectPosition);
+        BossBarTrainAnnounce.selectPosition.put(uuid, newSelectPosition);
 
         //ブロック数計算
         if(checkUtil.checkSelectPositionALL(player)) {

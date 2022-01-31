@@ -4,7 +4,7 @@ import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
 import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
 import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.model.LineModel;
-import com.github.rypengu23.bossbartrainannounce.util.CheckUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

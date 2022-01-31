@@ -9,14 +9,13 @@ import com.github.rypengu23.bossbartrainannounce.dao.AnnounceInfoDao;
 import com.github.rypengu23.bossbartrainannounce.dao.LineDao;
 import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
-import com.github.rypengu23.bossbartrainannounce.util.CheckUtil;
-import com.github.rypengu23.bossbartrainannounce.util.ConvertUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.ConvertUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class Command_flag {
 
@@ -87,6 +86,16 @@ public class Command_flag {
             if(args.length == 2) {
                 //レッドストーン登録・解除
                 registDirection(player);
+            }else{
+                //不正
+                player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
+                return;
+            }
+        }else if(args[1].equalsIgnoreCase("fast")){
+
+            if(args.length == 2) {
+                //アナウンススピードアップ設定
+                registFast(player);
             }else{
                 //不正
                 player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
@@ -510,7 +519,7 @@ public class Command_flag {
             direction = checkUtil.checkPositionAdjacent(selectPosition);
             System.out.println(direction);
             //pos1とpos2が隣接しているか
-            if (direction == -1) {
+            if (direction == -1 || direction == 0) {
                 player.sendMessage("§c[" + mainConfig.getPrefix() + "] §f隣接するブロックを選択して下さい。");
                 return;
             }
@@ -524,5 +533,56 @@ public class Command_flag {
         }else {
             player.sendMessage("§b[" + mainConfig.getPrefix() + "] §f選択した地点に方角制御を設定しました！");
         }
+    }
+
+    /**
+     * アナウンススピードアップフラグを登録・解除
+     * @param player コマンド送信者
+     */
+    public void registFast(Player player){
+
+        CheckUtil checkUtil = new CheckUtil();
+        AnnounceInfoDao announceInfoDao = new AnnounceInfoDao();
+
+        //権限チェック
+        if(!player.hasPermission("bossBarTrainAnnounce.registFastFlag")){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandDoNotHavePermission);
+            return;
+        }
+
+        //プレイヤーが選択しているアナウンス情報を取得
+        if(!checkUtil.checkSelectPositionPos1(player)){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §fアナウンス地点が選択されていません。");
+            return;
+        }
+        //選択した位置にアナウンス地点が存在するか
+        SelectPositionModel selectPosition = BossBarTrainAnnounce.selectPosition.get(player);
+        AnnounceInfoModel announceInfo = announceInfoDao.getAnnounceForCoordinate(selectPosition.getWorldName(), selectPosition.getPos1X(), selectPosition.getPos1Y(), selectPosition.getPos1Z());
+        if(announceInfo == null){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f選択した地点にアナウンスは登録されていません。");
+            return;
+        }
+
+        //路線の所有者チェック
+        if(!announceInfo.getUUID().equalsIgnoreCase(player.getUniqueId().toString())){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandDoNotHavePermission);
+            return;
+        }
+
+        //アナウンススピードアップフラグを設定
+        if(!announceInfo.isAnnounceFastFlag()){
+            announceInfo.setAnnounceFastFlag(true);
+        }else{
+            announceInfo.setAnnounceFastFlag(false);
+        }
+
+        //登録
+        announceInfoDao.updateAnnounceInfo(announceInfo);
+        if(announceInfo.isAnnounceFastFlag()){
+            player.sendMessage("§a["+ mainConfig.getPrefix() +"] §f" + CommandMessage.Command_Flag_RegistFast);
+        }else{
+            player.sendMessage("§a["+ mainConfig.getPrefix() +"] §f" + CommandMessage.Command_Flag_RemoveFast);
+        }
+
     }
 }

@@ -24,8 +24,9 @@ public class AnnounceInfoModel {
     private int redstonePosX;
     private int redstonePosY;
     private int redstonePosZ;
+    private boolean announceFastFlag;
 
-    public AnnounceInfoModel(String UUID, int nextOrSoon, String worldName, int posX, int posY, int posZ, String nextStationNameKanji, String lineNameJP, String boundJP, String boundEN, String typeJP, String exit, boolean terminal, int direction, String viaLineNameJP, String viaLineOwnerUUID, boolean redstone, int onOrOff, int redstonePosX, int redstonePosY, int redstonePosZ) {
+    public AnnounceInfoModel(String UUID, int nextOrSoon, String worldName, int posX, int posY, int posZ, String nextStationNameKanji, String lineNameJP, String boundJP, String boundEN, String typeJP, String exit, boolean terminal, int direction, String viaLineNameJP, String viaLineOwnerUUID, boolean redstone, int onOrOff, int redstonePosX, int redstonePosY, int redstonePosZ, boolean announceFastFlag) {
         this.UUID = UUID;
         this.nextOrSoon = nextOrSoon;
         this.worldName = worldName;
@@ -47,6 +48,7 @@ public class AnnounceInfoModel {
         this.redstonePosX = redstonePosX;
         this.redstonePosY = redstonePosY;
         this.redstonePosZ = redstonePosZ;
+        this.announceFastFlag = announceFastFlag;
     }
 
     public AnnounceInfoModel() {
@@ -219,5 +221,13 @@ public class AnnounceInfoModel {
 
     public void setRedstonePosZ(int redstonePosZ) {
         this.redstonePosZ = redstonePosZ;
+    }
+
+    public boolean isAnnounceFastFlag() {
+        return announceFastFlag;
+    }
+
+    public void setAnnounceFastFlag(boolean announceFastFlag) {
+        this.announceFastFlag = announceFastFlag;
     }
 }

@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class AnnounceInfoDao {
 
@@ -27,12 +28,12 @@ public class AnnounceInfoDao {
      * 全てのアナウンス情報を取得
      * @return
      */
-    public ArrayList<AnnounceInfoModel> getAnnounceInfoListAll(){
+    public HashSet<AnnounceInfoModel> getAnnounceInfoListAll(){
 
         ConnectDao connectDao = new ConnectDao();
         Connection connection = connectDao.getConnection();
 
-        ArrayList<AnnounceInfoModel> resultList = new ArrayList<>();
+        HashSet<AnnounceInfoModel> resultList = new HashSet<>();
 
         try {
             int p = 1;
@@ -128,6 +129,11 @@ public class AnnounceInfoDao {
                     model.setRedstonePosY(result.getInt("AR.Y"));
                     model.setRedstonePosZ(result.getInt("AR.Z"));
                 }
+                if(result.getInt("AI.FAST_FLAG") == 0){
+                    model.setAnnounceFastFlag(false);
+                }else{
+                    model.setAnnounceFastFlag(true);
+                }
             } else {
                 model = null;
             }
@@ -204,6 +210,11 @@ public class AnnounceInfoDao {
                     model.setRedstonePosY(result.getInt("AR.Y"));
                     model.setRedstonePosZ(result.getInt("AR.Z"));
                 }
+                if(result.getInt("AI.FAST_FLAG") == 0){
+                    model.setAnnounceFastFlag(false);
+                }else{
+                    model.setAnnounceFastFlag(true);
+                }
 
                 resultList.add(model);
             }
@@ -279,7 +290,8 @@ public class AnnounceInfoDao {
             insertSql.append("TERMINAL = ?, ");
             insertSql.append("DIRECTION = ?, ");
             insertSql.append("VIA_LINE_NAME = ?, ");
-            insertSql.append("VIA_LINE_OWNER_UUID = ? ");
+            insertSql.append("VIA_LINE_OWNER_UUID = ?, ");
+            insertSql.append("FAST_FLAG = ? ");
             insertSql.append("WHERE ");
             insertSql.append("WORLD = ? AND ");
             insertSql.append("X = ? AND ");
@@ -302,6 +314,11 @@ public class AnnounceInfoDao {
             ps.setInt(p++, announceInfoModel.getDirection());
             ps.setString(p++, announceInfoModel.getViaLineNameJP());
             ps.setString(p++, announceInfoModel.getViaLineOwnerUUID());
+            if(!announceInfoModel.isAnnounceFastFlag()){
+                ps.setInt(p++, 0);
+            }else{
+                ps.setInt(p++, 1);
+            }
 
             ps.setString(p++, announceInfoModel.getWorldName());
             ps.setInt(p++, announceInfoModel.getPosX());

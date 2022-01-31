@@ -7,12 +7,11 @@ import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.dao.AnnounceInfoDao;
 import com.github.rypengu23.bossbartrainannounce.dao.LineDao;
 import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
-import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import com.github.rypengu23.bossbartrainannounce.model.LineModel;
-import com.github.rypengu23.bossbartrainannounce.util.AnnounceLocationJudgeUtil;
-import com.github.rypengu23.bossbartrainannounce.util.CheckUtil;
-import com.github.rypengu23.bossbartrainannounce.util.ConvertUtil;
-import com.github.rypengu23.bossbartrainannounce.util.StationLocationJudgeUtil;
+import com.github.rypengu23.bossbartrainannounce.util.monitor.AnnounceLocationJudgeUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.ConvertUtil;
+import com.github.rypengu23.bossbartrainannounce.util.monitor.StationLocationJudgeUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -45,10 +44,13 @@ public class Command_line {
 
             if(args.length == 6){
                 //登録(環状線でない)
-                registLine(player, convertUtil.convertDoublePercentToSpace(args[1]), convertUtil.convertDoublePercentToSpace(args[2]), args[3], convertUtil.convertPercentAndColorCode(args[4]), convertUtil.convertPercentAndColorCode(args[5]), "false");
+                registLine(player, convertUtil.convertDoublePercentToSpace(args[1]), convertUtil.convertDoublePercentToSpace(args[2]), args[3], convertUtil.convertPercentAndColorCode(args[4]), convertUtil.convertPercentAndColorCode(args[5]), "false", "false");
             }else if(args.length == 7){
-                //登録(環状線)
-                registLine(player, convertUtil.convertDoublePercentToSpace(args[1]), convertUtil.convertDoublePercentToSpace(args[2]), args[3], convertUtil.convertPercentAndColorCode(args[4]), convertUtil.convertPercentAndColorCode(args[5]), args[6]);
+                //登録(環状線フラグまで指定あり)
+                registLine(player, convertUtil.convertDoublePercentToSpace(args[1]), convertUtil.convertDoublePercentToSpace(args[2]), args[3], convertUtil.convertPercentAndColorCode(args[4]), convertUtil.convertPercentAndColorCode(args[5]), args[6], "false");
+            }else if(args.length == 8){
+                //登録(地下鉄フラグまで指定あり)
+                registLine(player, convertUtil.convertDoublePercentToSpace(args[1]), convertUtil.convertDoublePercentToSpace(args[2]), args[3], convertUtil.convertPercentAndColorCode(args[4]), convertUtil.convertPercentAndColorCode(args[5]), args[6], args[7]);
             }else{
                 //不正
                 player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
@@ -156,7 +158,7 @@ public class Command_line {
      * @param typeEN
      * @return
      */
-    public boolean registLine(Player player, String lineNameJp, String lineNameEn, String lineColor, String typeJP, String typeEN, String loop){
+    public boolean registLine(Player player, String lineNameJp, String lineNameEn, String lineColor, String typeJP, String typeEN, String loop, String subway){
 
         LineDao lineDao = new LineDao();
         CheckUtil checkUtil = new CheckUtil();
@@ -206,10 +208,20 @@ public class Command_line {
             loopFlag = true;
         }
 
+        //地下鉄フラグチェック
+        if(!(loop.equalsIgnoreCase("true") || loop.equalsIgnoreCase("false"))){
+            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f地下鉄フラグはtrueまたはfalseを入力して下さい。");
+            return false;
+        }
+        boolean subwayFlag = false;
+        if(subway.equalsIgnoreCase("true")){
+            subwayFlag = true;
+        }
+
         LineModel lineModel = new LineModel();
         HashMap<String, String> typeHashMap = lineModel.convertTypeHashMap(typeJP, typeEN);
 
-        if(lineDao.insertLine(new LineModel(player.getUniqueId().toString() ,lineNameJp, lineNameEn, lineColor, typeHashMap, loopFlag)) > 0){
+        if(lineDao.insertLine(new LineModel(player.getUniqueId().toString() ,lineNameJp, lineNameEn, lineColor, typeHashMap, loopFlag, subwayFlag)) > 0){
             player.sendMessage("§a["+ mainConfig.getPrefix() +"] §f路線を登録しました！");
             player.sendMessage("§f路線名(和名): "+ lineNameJp +" §f路線名(英語): "+ lineNameEn);
             return true;

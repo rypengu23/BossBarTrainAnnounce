@@ -9,11 +9,14 @@ import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
 import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
 import com.github.rypengu23.bossbartrainannounce.model.LineModel;
 import com.github.rypengu23.bossbartrainannounce.model.StationModel;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.ConvertUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class AnnounceUtil {
 
@@ -35,7 +38,7 @@ public class AnnounceUtil {
         ConvertUtil convertUtil = new ConvertUtil();
         ArrayList<String> sendMessageListJP = new ArrayList<>();
         ArrayList<String> sendMessageListEN = new ArrayList<>();
-
+        UUID uuid = player.getUniqueId();
 
         //次駅情報取得
         StationModel stationInfo = stationDao.getStationForStationName(announceInfo.getUUID(), announceInfo.getNextStationNameKanji(), announceInfo.getLineNameJP());
@@ -136,8 +139,8 @@ public class AnnounceUtil {
             public void run() {
                 //全てのアナウンスを流し終わった場合、タスクをキル
                 if(repeat >= sendMessageList.size()) {
-                    BossBarTrainAnnounce.announceTask.get(player).cancel();
-                    BossBarTrainAnnounce.announceTask.remove(player);
+                    BossBarTrainAnnounce.announceTask.get(uuid).cancel();
+                    BossBarTrainAnnounce.announceTask.remove(uuid);
                 }else {
                     player.sendMessage(sendMessageList.get(repeat));
                     repeat++;
@@ -145,14 +148,21 @@ public class AnnounceUtil {
             }
         };
 
-        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimer(BossBarTrainAnnounce.getInstance(), announceTask, 10L, 50L);
+        Long announceInterval = null;
+        if(announceInfo.isAnnounceFastFlag()){
+            announceInterval = mainConfig.getAnnounceIntervalOfFastFlag();
+        }else{
+            announceInterval = mainConfig.getAnnounceInterval();
+        }
+
+        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimer(BossBarTrainAnnounce.getInstance(), announceTask, 10L, announceInterval);
 
         //タスクを保管
-        if(BossBarTrainAnnounce.announceTask.containsKey(player)){
+        if(BossBarTrainAnnounce.announceTask.containsKey(uuid)){
             //既にアナウンス実行中の場合、タスク終了
-            BossBarTrainAnnounce.announceTask.get(player).cancel();
-            BossBarTrainAnnounce.announceTask.remove(player);
+            BossBarTrainAnnounce.announceTask.get(uuid).cancel();
+            BossBarTrainAnnounce.announceTask.remove(uuid);
         }
-        BossBarTrainAnnounce.announceTask.put(player, task);
+        BossBarTrainAnnounce.announceTask.put(uuid, task);
     }
 }

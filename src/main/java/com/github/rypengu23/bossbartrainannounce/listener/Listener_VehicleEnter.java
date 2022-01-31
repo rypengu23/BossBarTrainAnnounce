@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 
+import java.util.UUID;
+
 public class Listener_VehicleEnter implements Listener {
 
     /**
@@ -25,10 +27,11 @@ public class Listener_VehicleEnter implements Listener {
         }
 
         Player player = (Player) event.getEntered();
+        UUID uuid = player.getUniqueId();
 
         //追加
-        BossBarTrainAnnounce.playerLocationList.put(player.getUniqueId().toString(), event.getVehicle().getLocation());
-        BossBarTrainAnnounce.playerBefore1BlockLocationList.put(player.getUniqueId().toString(), event.getVehicle().getLocation());
+        BossBarTrainAnnounce.playerLocationList.put(uuid, event.getVehicle().getLocation());
+        BossBarTrainAnnounce.playerBefore1BlockLocationList.put(uuid, event.getVehicle().getLocation());
 
     }
 }

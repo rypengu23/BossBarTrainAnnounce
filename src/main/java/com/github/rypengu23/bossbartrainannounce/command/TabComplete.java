@@ -82,9 +82,21 @@ public class TabComplete implements TabCompleter {
                 onCompList.add("select");
             }
 
+            //プレイヤーデータ関連
+            if(sender.hasPermission("bossBarTrainAnnounce.toggleSetting")){
+                onCompList.add("speed");
+                onCompList.add("show");
+                onCompList.add("hide");
+            }
+
             //Config関連
             if(sender.hasPermission("bossBarTrainAnnounce.reload")){
                 onCompList.add("reload");
+            }
+
+            //Database関連
+            if(sender.hasPermission("bossBarTrainAnnounce.database")){
+                onCompList.add("updateDatabase");
             }
 
         }else if(args.length == 2){
@@ -151,6 +163,9 @@ public class TabComplete implements TabCompleter {
             if(args[0].equalsIgnoreCase("flag") && (sender.hasPermission("bossBarTrainAnnounce.registDirection") || sender.hasPermission("bossBarTrainAnnounce.removeRedstone"))){
                 onCompList.add("direction");
             }
+            if(args[0].equalsIgnoreCase("flag") && (sender.hasPermission("bossBarTrainAnnounce.registFastFlag") || sender.hasPermission("bossBarTrainAnnounce.removeRedstone"))){
+                onCompList.add("fast");
+            }
 
             //情報関連
             if(args[0].equalsIgnoreCase("info") && sender.hasPermission("bossBarTrainAnnounce.info")){
@@ -163,6 +178,17 @@ public class TabComplete implements TabCompleter {
             if(args[0].equalsIgnoreCase("select") && sender.hasPermission("bossBarTrainAnnounce.select")){
                 onCompList.add("pos1");
                 onCompList.add("pos2");
+            }
+
+            //プレイヤーデータ関連
+            if((args[0].equalsIgnoreCase("show") || args[0].equalsIgnoreCase("hide")) && sender.hasPermission("bossBarTrainAnnounce.toggleSetting")){
+                onCompList.add("bossbar");
+                onCompList.add("announce");
+            }
+
+            //Database関連
+            if(args[0].equalsIgnoreCase("updateDatabase") && sender.hasPermission("bossBarTrainAnnounce.database")){
+                onCompList.add("1.0");
             }
 
         }else if(args.length == 3){
@@ -392,7 +418,16 @@ public class TabComplete implements TabCompleter {
             //路線関連
             if (args[0].equalsIgnoreCase("registline") && sender.hasPermission("bossBarTrainAnnounce.registLine")) {
                 onCompList.add("true");
-                onCompList.add("環状線(任意)");
+                onCompList.add("false");
+                onCompList.add("環状線フラグ(任意)");
+            }
+        }else if(args.length == 8) {
+
+            //路線関連
+            if (args[0].equalsIgnoreCase("registline") && sender.hasPermission("bossBarTrainAnnounce.registLine")) {
+                onCompList.add("true");
+                onCompList.add("false");
+                onCompList.add("地下鉄フラグ(任意)");
             }
         }
 

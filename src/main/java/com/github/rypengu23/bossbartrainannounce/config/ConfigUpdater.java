@@ -1,7 +1,7 @@
 package com.github.rypengu23.bossbartrainannounce.config;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
-import com.github.rypengu23.bossbartrainannounce.util.CheckUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
 import jp.jyn.jbukkitlib.config.YamlLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;

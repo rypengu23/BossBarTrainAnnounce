@@ -6,7 +6,7 @@
 
     <groupId>com.github.rypengu23</groupId>
     <artifactId>BossBarTrainAnnounce</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
 
     <name>BossBarTrainAnnounce</name>
@@ -45,7 +45,16 @@
                                     <include>org.slf4j:*</include>
                                     <include>com.zaxxer:*</include>
                                 </includes>
+                                <includes>
+                                    <include>jp.jyn:JBukkitLib</include>
+                                </includes>
                             </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>jp.jyn.jbukkitlib</pattern>
+                                    <shadedPattern>com.example.jbukkitlib</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -78,7 +87,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

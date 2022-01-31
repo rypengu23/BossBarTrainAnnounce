@@ -4,21 +4,23 @@ import com.github.rypengu23.bossbartrainannounce.config.CommandMessage;
 import com.github.rypengu23.bossbartrainannounce.config.ConfigLoader;
 import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
 import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
-import com.github.rypengu23.bossbartrainannounce.util.monitor.AnnounceLocationJudgeUtil;
+import com.github.rypengu23.bossbartrainannounce.dao.ConnectDao;
 import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
-import com.github.rypengu23.bossbartrainannounce.util.monitor.StationLocationJudgeUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Command_Config {
+public class Command_database {
 
     private final ConfigLoader configLoader;
     private final MainConfig mainConfig;
     private final MessageConfig messageConfig;
 
-    public Command_Config(){
+    public Command_database(){
         configLoader = new ConfigLoader();
         mainConfig = configLoader.getMainConfig();
         messageConfig = configLoader.getMessageConfig();
@@ -33,11 +35,11 @@ public class Command_Config {
 
         Player player = (Player)sender;
 
-        if(args[0].equalsIgnoreCase("reload")){
+        if(args[0].equalsIgnoreCase("updateDatabase")){
 
-            if(args.length == 1){
+            if(args.length == 2){
                 //リロード
-                reload(player);
+                updataDatabase(player, args[1]);
             }else{
                 //不正
                 player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
@@ -50,7 +52,7 @@ public class Command_Config {
     }
 
     /**
-     * 引数のコマンドがConfig関連のコマンドか判定
+     * 引数のコマンドがDatabase関連のコマンドか判定
      * @param command
      * @return
      */
@@ -62,31 +64,44 @@ public class Command_Config {
         }
 
         ArrayList<String> commandList = new ArrayList<>();
-        commandList.add("reload");
+        commandList.add("updateDatabase");
 
         return commandList.contains(command.toLowerCase());
     }
 
-    public boolean reload(Player player){
+    public boolean updataDatabase(Player player, String version){
 
         //権限チェック
-        if(!player.hasPermission("bossBarTrainAnnounce.reload")){
+        if(!player.hasPermission("bossBarTrainAnnounce.database")){
             player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandDoNotHavePermission);
             return false;
         }
 
-        //Config再読み込み
-        ConfigLoader configLoader = new ConfigLoader();
-        configLoader.reloadConfig();
+        if(version.equals("1.0")){
+            updateFrom10();
+            return true;
+        }
 
-        //ロケーションキャッシュ再読み込み
-        AnnounceLocationJudgeUtil announceLocationJudgeUtil = new AnnounceLocationJudgeUtil();
-        announceLocationJudgeUtil.updateAnnounceListCache();
-        StationLocationJudgeUtil stationLocationJudgeUtil = new StationLocationJudgeUtil();
-        stationLocationJudgeUtil.updateStationListCache();
+        return false;
+    }
 
-        player.sendMessage("§a["+ mainConfig.getPrefix() +"] §fConfig・キャッシュのリロードが完了しました。");
+    private int updateFrom10(){
+        ConnectDao connectDao = new ConnectDao();
+        Connection connection = connectDao.getConnection();
+        int result = 0;
 
-        return true;
+        try {
+            int p = 1;
+
+            String sql1 = "ALTER TABLE BBTA_AnnounceInfo ADD FAST_FLAG INT NOT NULL DEFAULT 0 ";
+
+            PreparedStatement ps = connection.prepareStatement(sql1);
+            result = ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }

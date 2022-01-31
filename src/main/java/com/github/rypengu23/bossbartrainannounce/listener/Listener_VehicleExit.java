@@ -2,12 +2,14 @@ package com.github.rypengu23.bossbartrainannounce.listener;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
 import com.github.rypengu23.bossbartrainannounce.util.BossBarUtil;
-import com.github.rypengu23.bossbartrainannounce.util.TaskUtil;
+import com.github.rypengu23.bossbartrainannounce.util.tools.TaskUtil;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleExitEvent;
+
+import java.util.UUID;
 
 public class Listener_VehicleExit implements Listener {
 
@@ -28,6 +30,7 @@ public class Listener_VehicleExit implements Listener {
         BossBarUtil bossBarUtil = new BossBarUtil();
         TaskUtil taskUtil = new TaskUtil();
         Player player = (Player) event.getExited();
+        UUID uuid = player.getUniqueId();
 
         //タスク終了
         taskUtil.removeTask(player);
@@ -37,8 +40,8 @@ public class Listener_VehicleExit implements Listener {
         bossBarUtil.removeBossBar(player);
 
         //ロケーションリストから削除
-        BossBarTrainAnnounce.playerLocationList.remove(player.getUniqueId().toString());
-        BossBarTrainAnnounce.playerBefore1BlockLocationList.remove(player.getUniqueId().toString());
+        BossBarTrainAnnounce.playerLocationList.remove(uuid);
+        BossBarTrainAnnounce.playerBefore1BlockLocationList.remove(uuid);
 
     }
 }
