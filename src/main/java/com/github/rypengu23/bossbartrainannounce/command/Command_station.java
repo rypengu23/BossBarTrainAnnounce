@@ -139,7 +139,7 @@ public class Command_station {
 
         StationDao stationDao = new StationDao();
         LineDao lineDao = new LineDao();
-        SelectPositionModel select = BossBarTrainAnnounce.selectPosition.get(player);
+        SelectPositionModel select = BossBarTrainAnnounce.selectPosition.get(player.getUniqueId());
         CheckUtil checkUtil = new CheckUtil();
 
         //権限チェック
@@ -380,7 +380,7 @@ public class Command_station {
 
         StationDao stationDao = new StationDao();
         LineDao lineDao = new LineDao();
-        SelectPositionModel select = BossBarTrainAnnounce.selectPosition.get(player);
+        SelectPositionModel select = BossBarTrainAnnounce.selectPosition.get(player.getUniqueId());
 
         CheckUtil checkUtil = new CheckUtil();
 
@@ -448,6 +448,13 @@ public class Command_station {
 
             player.sendMessage("§a["+ mainConfig.getPrefix() +"] §f駅の座標を変更しました！");
             player.sendMessage("§f駅名: "+ stationName);
+
+            //アナウンスロケーション情報のアップデート
+            AnnounceLocationJudgeUtil announceLocationJudgeUtil = new AnnounceLocationJudgeUtil();
+            announceLocationJudgeUtil.updateAnnounceListCache();
+            StationLocationJudgeUtil stationLocationJudgeUtil = new StationLocationJudgeUtil();
+            stationLocationJudgeUtil.updateStationListCache();
+
             return true;
         }
         return false;

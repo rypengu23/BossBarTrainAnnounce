@@ -20,7 +20,7 @@ public class AnnounceLocationJudgeUtil {
      * @param location
      * @return
      */
-    public boolean checkAnnouncePosition(Location location){
+    public AnnounceInfoModel checkAnnouncePosition(Location location){
 
         HashSet<AnnounceInfoModel> announceInfoListWork = BossBarTrainAnnounce.announceInfoList;
 
@@ -29,18 +29,48 @@ public class AnnounceLocationJudgeUtil {
             if(!announceInfo.getWorldName().equals(location.getWorld().getName())){
                 resultFlag = false;
             }
-            if(announceInfo.getPosX() != location.getBlockX()){
+            if(!checkRange05(announceInfo.getPosX(), location.getX())){
                 resultFlag = false;
             }
-            if(announceInfo.getPosY() != location.getBlockY()){
+            if(!checkRange15(announceInfo.getPosY(), location.getY())){
                 resultFlag = false;
             }
-            if(announceInfo.getPosZ() != location.getBlockZ()){
+            if(!checkRange05(announceInfo.getPosZ(), location.getZ())){
                 resultFlag = false;
             }
             if(resultFlag){
-                return true;
+                return announceInfo;
             }
+        }
+        return null;
+    }
+
+    /**
+     * 座標が0.5マス以内か
+     * @param vehicleLocation
+     * @return
+     */
+    public boolean checkRange05(int registLocation, double vehicleLocation){
+
+        if(vehicleLocation - (double)registLocation >= 0 && vehicleLocation - (double)registLocation <= 0.6){
+            return true;
+        }else if(vehicleLocation - (double)registLocation >= -0.6 && vehicleLocation - (double)registLocation <= 0){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 座標が1.5マス以内か
+     * @param vehicleLocation
+     * @return
+     */
+    public boolean checkRange15(int registLocation, double vehicleLocation){
+
+        if(vehicleLocation - (double)registLocation >= 0 && vehicleLocation - (double)registLocation <= 1.5){
+            return true;
+        }else if(vehicleLocation - (double)registLocation >= -1.5 && vehicleLocation - (double)registLocation <= 0){
+            return true;
         }
         return false;
     }

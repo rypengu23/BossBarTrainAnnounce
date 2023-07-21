@@ -133,7 +133,7 @@ public class Command_announce {
         }
 
         //プレイヤーの地点選択情報を確認
-        SelectPositionModel selectPosition = BossBarTrainAnnounce.selectPosition.get(player);
+        SelectPositionModel selectPosition = BossBarTrainAnnounce.selectPosition.get(player.getUniqueId());
 
         //入力値チェック
 
@@ -226,7 +226,7 @@ public class Command_announce {
             return false;
         }
         //選択した位置にアナウンス地点が存在するか
-        SelectPositionModel selectPosition = BossBarTrainAnnounce.selectPosition.get(player);
+        SelectPositionModel selectPosition = BossBarTrainAnnounce.selectPosition.get(player.getUniqueId());
         AnnounceInfoModel announceInfo = announceInfoDao.getAnnounceForCoordinate(selectPosition.getWorldName(), selectPosition.getPos1X(), selectPosition.getPos1Y(), selectPosition.getPos1Z());
         if(announceInfo == null){
             player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f選択した地点にアナウンスは登録されていません。");

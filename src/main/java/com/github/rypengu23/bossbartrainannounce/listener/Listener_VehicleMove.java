@@ -78,11 +78,12 @@ public class Listener_VehicleMove implements Listener {
         int nextOrSoonOrStopOrMove = 0;
 
         //アナウンス位置・駅位置判定
-        if(announceLocationJudgeUtil.checkAnnouncePosition(vehicleLocation)){
+        AnnounceInfoModel announceLocation = announceLocationJudgeUtil.checkAnnouncePosition(vehicleLocation);
+        if(announceLocation != null){
             //アナウンス地点の場合
 
             //アナウンス情報取得
-            announceInfo = announceInfoDao.getAnnounceForCoordinate(vehicleLocation.getWorld().getName(), vehicleLocation.getBlockX(), vehicleLocation.getBlockY(), vehicleLocation.getBlockZ());
+            announceInfo = announceInfoDao.getAnnounceForCoordinate(vehicleLocation.getWorld().getName(), announceLocation.getPosX(), announceLocation.getPosY(), announceLocation.getPosZ());
             stationModel = stationDao.getStationForStationName(announceInfo.getUUID(), announceInfo.getNextStationNameKanji(), announceInfo.getLineNameJP());
 
             nextOrSoonOrStopOrMove = announceInfo.getNextOrSoon();

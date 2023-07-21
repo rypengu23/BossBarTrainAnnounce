@@ -6,10 +6,7 @@ import com.github.rypengu23.bossbartrainannounce.config.MainConfig;
 import com.github.rypengu23.bossbartrainannounce.config.MessageConfig;
 import com.github.rypengu23.bossbartrainannounce.dao.AnnounceInfoDao;
 import com.github.rypengu23.bossbartrainannounce.dao.StationDao;
-import com.github.rypengu23.bossbartrainannounce.model.AnnounceInfoModel;
-import com.github.rypengu23.bossbartrainannounce.model.PlayerDataModel;
-import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
-import com.github.rypengu23.bossbartrainannounce.model.StationModel;
+import com.github.rypengu23.bossbartrainannounce.model.*;
 import com.github.rypengu23.bossbartrainannounce.util.AnnounceUtil;
 import com.github.rypengu23.bossbartrainannounce.util.BossBarUtil;
 import com.github.rypengu23.bossbartrainannounce.util.tools.CheckUtil;
@@ -128,11 +125,12 @@ public class VehicleMoveMonitorUtil {
                     }
 
                     //アナウンス位置・駅位置判定
-                    if (announceLocationJudgeUtil.checkAnnouncePosition(vehicleLocation)) {
+                    AnnounceInfoModel announceLocation = announceLocationJudgeUtil.checkAnnouncePosition(vehicleLocation);
+                    if(announceLocation != null){
                         //アナウンス地点の場合
 
                         //アナウンス情報取得
-                        announceInfo = announceInfoDao.getAnnounceForCoordinate(vehicleLocation.getWorld().getName(), vehicleLocation.getBlockX(), vehicleLocation.getBlockY(), vehicleLocation.getBlockZ());
+                        announceInfo = announceInfoDao.getAnnounceForCoordinate(vehicleLocation.getWorld().getName(), announceLocation.getPosX(), announceLocation.getPosY(), announceLocation.getPosZ());
                         stationModel = stationDao.getStationForStationName(announceInfo.getUUID(), announceInfo.getNextStationNameKanji(), announceInfo.getLineNameJP());
 
                         nextOrSoonOrStopOrMove = announceInfo.getNextOrSoon();
@@ -215,6 +213,6 @@ public class VehicleMoveMonitorUtil {
             }
 
         };
-        BossBarTrainAnnounce.vehicleMoveEvent.scheduleAtFixedRate(task,0,30);
+        BossBarTrainAnnounce.vehicleMoveEvent.scheduleAtFixedRate(task,0,20);
     }
 }

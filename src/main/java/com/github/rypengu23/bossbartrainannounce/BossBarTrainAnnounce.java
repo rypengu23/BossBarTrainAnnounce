@@ -28,7 +28,7 @@ import java.util.*;
 public final class BossBarTrainAnnounce extends JavaPlugin implements Listener {
 
     //バージョン
-    public static double pluginVersion = 1.1;
+    public static double pluginVersion = 1.4;
 
     //インスタンス
     private static BossBarTrainAnnounce instance = null;

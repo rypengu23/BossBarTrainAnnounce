@@ -36,30 +36,36 @@ public class Command_select {
         Player player = (Player)sender;
 
         //フラグ
-        if(args[1].equalsIgnoreCase("pos1")){
+        if(args.length >= 2) {
+            if (args[1].equalsIgnoreCase("pos1")) {
 
-            if(args.length == 5){
-                //pos1選択
-                selectPosition(player, 0, args[2], args[3], args[4]);
-            }else{
+                if (args.length == 5) {
+                    //pos1選択
+                    selectPosition(player, 0, args[2], args[3], args[4]);
+                } else {
+                    //不正
+                    player.sendMessage("§c[" + mainConfig.getPrefix() + "] §f" + CommandMessage.CommandFailure);
+                    return;
+                }
+
+            } else if (args[1].equalsIgnoreCase("pos2")) {
+
+                if (args.length == 5) {
+                    //pos2選択
+                    selectPosition(player, 1, args[2], args[3], args[4]);
+                } else {
+                    //不正
+                    player.sendMessage("§c[" + mainConfig.getPrefix() + "] §f" + CommandMessage.CommandFailure);
+                    return;
+                }
+            } else {
                 //不正
-                player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
+                player.sendMessage("§c[" + mainConfig.getPrefix() + "] §f" + CommandMessage.CommandFailure);
                 return;
             }
-
-        }else if(args[1].equalsIgnoreCase("pos2")){
-
-            if(args.length == 5){
-                //pos2選択
-                selectPosition(player, 1, args[2], args[3], args[4]);
-            }else{
-                //不正
-                player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
-                return;
-            }
-        }else{
+        } else {
             //不正
-            player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
+            player.sendMessage("§c[" + mainConfig.getPrefix() + "] §f" + CommandMessage.CommandFailure);
             return;
         }
     }
@@ -129,11 +135,13 @@ public class Command_select {
             newSelectPosition.setSelectPos1(true);
 
             //既に選択しているpos2のワールドと同一の場合、選択を保持
-            if(oldSelectPosition.isSelectPos2() && player.getLocation().getWorld().getName().equalsIgnoreCase(oldSelectPosition.getWorldName())){
-                newSelectPosition.setPos2X(oldSelectPosition.getPos2X());
-                newSelectPosition.setPos2Y(oldSelectPosition.getPos2Y());
-                newSelectPosition.setPos2Z(oldSelectPosition.getPos2Z());
-                newSelectPosition.setSelectPos2(true);
+            if(oldSelectPosition != null) {
+                if (oldSelectPosition.isSelectPos2() && player.getLocation().getWorld().getName().equalsIgnoreCase(oldSelectPosition.getWorldName())) {
+                    newSelectPosition.setPos2X(oldSelectPosition.getPos2X());
+                    newSelectPosition.setPos2Y(oldSelectPosition.getPos2Y());
+                    newSelectPosition.setPos2Z(oldSelectPosition.getPos2Z());
+                    newSelectPosition.setSelectPos2(true);
+                }
             }
 
         }else{
@@ -144,11 +152,13 @@ public class Command_select {
             newSelectPosition.setSelectPos2(true);
 
             //既に選択しているpos1のワールドと同一の場合、選択を保持
-            if(oldSelectPosition.isSelectPos1() && player.getLocation().getWorld().getName().equalsIgnoreCase(oldSelectPosition.getWorldName())){
-                newSelectPosition.setPos1X(oldSelectPosition.getPos1X());
-                newSelectPosition.setPos1Y(oldSelectPosition.getPos1Y());
-                newSelectPosition.setPos1Z(oldSelectPosition.getPos1Z());
-                newSelectPosition.setSelectPos1(true);
+            if(oldSelectPosition != null) {
+                if (oldSelectPosition.isSelectPos1() && player.getLocation().getWorld().getName().equalsIgnoreCase(oldSelectPosition.getWorldName())) {
+                    newSelectPosition.setPos1X(oldSelectPosition.getPos1X());
+                    newSelectPosition.setPos1Y(oldSelectPosition.getPos1Y());
+                    newSelectPosition.setPos1Z(oldSelectPosition.getPos1Z());
+                    newSelectPosition.setSelectPos1(true);
+                }
             }
         }
 

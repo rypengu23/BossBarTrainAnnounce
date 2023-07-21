@@ -27,7 +27,7 @@ public class Command_database {
     }
 
     /**
-     * /bbta reloadコマンドを振り分ける
+     * /bbta updateDatabaseコマンドを振り分ける
      * @param sender
      * @param args
      */
@@ -38,8 +38,8 @@ public class Command_database {
         if(args[0].equalsIgnoreCase("updateDatabase")){
 
             if(args.length == 2){
-                //リロード
-                updataDatabase(player, args[1]);
+                //アップデート
+                updateDatabase(player, args[1]);
             }else{
                 //不正
                 player.sendMessage("§c["+ mainConfig.getPrefix() +"] §f" + CommandMessage.CommandFailure);
@@ -69,7 +69,7 @@ public class Command_database {
         return commandList.contains(command.toLowerCase());
     }
 
-    public boolean updataDatabase(Player player, String version){
+    public boolean updateDatabase(Player player, String version){
 
         //権限チェック
         if(!player.hasPermission("bossBarTrainAnnounce.database")){

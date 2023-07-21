@@ -67,9 +67,9 @@ public class CommandMessage {
             Command_playerData_AlreadySetting = "既に設定済みです。";
 
             Command_Info_SHOWSTATUS1 = "§b――――― §f{player}の情報 §b―――――";
-            Command_Info_SHOWSTATUS2 = "高速化: {speed}";
-            Command_Info_SHOWSTATUS3 = "BossBar表示: {bossbar}";
-            Command_Info_SHOWSTATUS4 = "アナウンス表示: {announce}";
+            Command_Info_SHOWSTATUS2 = "§f高速化: {speed}";
+            Command_Info_SHOWSTATUS3 = "§fBossBar表示: {bossbar}";
+            Command_Info_SHOWSTATUS4 = "§fアナウンス表示: {announce}";
             Command_Info_SHOWSTATUS5 = "§b――――――――――――――――――――――――――――――――――――――――";
             Command_Info_PlayerNotFound = "指定したプレイヤーは見つかりませんでした。";
 
@@ -102,9 +102,9 @@ public class CommandMessage {
             Command_playerData_AlreadySetting = "It is already set.";
 
             Command_Info_SHOWSTATUS1 = "§b――――― §f{player}'s information §b―――――";
-            Command_Info_SHOWSTATUS2 = "Increase speed: {speed}";
-            Command_Info_SHOWSTATUS3 = "Show BossBar: {bossbar}";
-            Command_Info_SHOWSTATUS4 = "Show Announce: {announce}";
+            Command_Info_SHOWSTATUS2 = "§fIncrease speed: {speed}";
+            Command_Info_SHOWSTATUS3 = "§fShow BossBar: {bossbar}";
+            Command_Info_SHOWSTATUS4 = "§fShow Announce: {announce}";
             Command_Info_SHOWSTATUS5 = "§b――――――――――――――――――――――――――――――――――――――――";
             Command_Info_PlayerNotFound = "Player not found.";
 

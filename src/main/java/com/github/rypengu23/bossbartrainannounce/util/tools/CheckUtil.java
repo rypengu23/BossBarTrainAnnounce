@@ -2,6 +2,7 @@ package com.github.rypengu23.bossbartrainannounce.util.tools;
 
 import com.github.rypengu23.bossbartrainannounce.BossBarTrainAnnounce;
 import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModel;
+import com.github.rypengu23.bossbartrainannounce.model.SelectPositionModelDouble;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -132,11 +133,11 @@ public class CheckUtil {
      */
     public boolean checkSelectPositionALL(Player player){
 
-        if(!BossBarTrainAnnounce.selectPosition.containsKey(player)){
+        if(!BossBarTrainAnnounce.selectPosition.containsKey(player.getUniqueId())){
             return false;
         }
 
-        return BossBarTrainAnnounce.selectPosition.get(player).isSelectPos1() && BossBarTrainAnnounce.selectPosition.get(player).isSelectPos2();
+        return BossBarTrainAnnounce.selectPosition.get(player.getUniqueId()).isSelectPos1() && BossBarTrainAnnounce.selectPosition.get(player.getUniqueId()).isSelectPos2();
     }
 
     /**
@@ -147,11 +148,11 @@ public class CheckUtil {
      */
     public boolean checkSelectPositionPos1(Player player){
 
-        if(!BossBarTrainAnnounce.selectPosition.containsKey(player)){
+        if(!BossBarTrainAnnounce.selectPosition.containsKey(player.getUniqueId())){
             return false;
         }
 
-        return BossBarTrainAnnounce.selectPosition.get(player).isSelectPos1();
+        return BossBarTrainAnnounce.selectPosition.get(player.getUniqueId()).isSelectPos1();
     }
 
     /**
@@ -162,11 +163,11 @@ public class CheckUtil {
      */
     public boolean checkSelectPositionPos2(Player player){
 
-        if(!BossBarTrainAnnounce.selectPosition.containsKey(player)){
+        if(!BossBarTrainAnnounce.selectPosition.containsKey(player.getUniqueId())){
             return false;
         }
 
-        return BossBarTrainAnnounce.selectPosition.get(player).isSelectPos2();
+        return BossBarTrainAnnounce.selectPosition.get(player.getUniqueId()).isSelectPos2();
     }
 
     /**
@@ -222,7 +223,51 @@ public class CheckUtil {
      */
     public int checkPositionAdjacent(SelectPositionModel selectPositionModel){
 
-        System.out.println("x:"+ selectPositionModel.getPos1X() +" y:"+ selectPositionModel.getPos1Y() +" z:"+ selectPositionModel.getPos1Z() +" x:"+ selectPositionModel.getPos2X() + " y:"+ selectPositionModel.getPos2Y() +" z:"+ selectPositionModel.getPos2Z());
+        //pos1とpos2が同一
+        if(checkSameLocation(new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos1X(), selectPositionModel.getPos1Y(), selectPositionModel.getPos1Z()), new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos2X(), selectPositionModel.getPos2Y(), selectPositionModel.getPos2Z()))){
+            return 0;
+        }
+        //Y座標が違う
+        if(selectPositionModel.getPos1Y() != selectPositionModel.getPos2Y()){
+            return -1;
+        }
+
+        //隣接チェック
+        if(Math.abs(selectPositionModel.getPos1X() - selectPositionModel.getPos2X()) != 1 && selectPositionModel.getPos1Z() == selectPositionModel.getPos2Z()){
+            return -1;
+        }
+        if(Math.abs(selectPositionModel.getPos1Z() - selectPositionModel.getPos2Z()) != 1 && selectPositionModel.getPos1X() == selectPositionModel.getPos2X()){
+            return -1;
+        }
+
+        //北
+        if(selectPositionModel.getPos1Z() - selectPositionModel.getPos2Z() == -1){
+            return 1;
+        }
+        //南
+        if(selectPositionModel.getPos1Z() - selectPositionModel.getPos2Z() == 1){
+            return 2;
+        }
+        //東
+        if(selectPositionModel.getPos1X() - selectPositionModel.getPos2X() == 1){
+            return 3;
+        }
+        //西
+        if(selectPositionModel.getPos1X() - selectPositionModel.getPos2X() == -1){
+            return 4;
+        }
+
+        return -1;
+    }
+
+    /**
+     * 選択した２箇所の座標が隣接している場合、走行する方角を送信。
+     * -1:隣接していない 0:同じ座標 1:北 2:南 3:東 4:西
+     * 隣接していない場合、nullを返す
+     * @param selectPositionModel
+     * @return
+     */
+    public int checkPositionAdjacentDouble(SelectPositionModelDouble selectPositionModel){
 
         //pos1とpos2が同一
         if(checkSameLocation(new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos1X(), selectPositionModel.getPos1Y(), selectPositionModel.getPos1Z()), new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos2X(), selectPositionModel.getPos2Y(), selectPositionModel.getPos2Z()))){
@@ -269,8 +314,6 @@ public class CheckUtil {
      */
     public int checkDirection(SelectPositionModel selectPositionModel){
 
-        System.out.println("x:"+ selectPositionModel.getPos1X() +" y:"+ selectPositionModel.getPos1Y() +" z:"+ selectPositionModel.getPos1Z() +" x:"+ selectPositionModel.getPos2X() + " y:"+ selectPositionModel.getPos2Y() +" z:"+ selectPositionModel.getPos2Z());
-
         //pos1とpos2が同一
         if(checkSameLocation(new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos1X(), selectPositionModel.getPos1Y(), selectPositionModel.getPos1Z()), new Location(Bukkit.getServer().getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos2X(), selectPositionModel.getPos2Y(), selectPositionModel.getPos2Z()))){
             return 0;
@@ -315,7 +358,6 @@ public class CheckUtil {
         //走行中の方角を確認
         int direction = checkDirection(new SelectPositionModel(vehicleLocation.getWorld().getName(), vehicleLocation.getBlockX(), vehicleLocation.getBlockY(), vehicleLocation.getBlockZ(), before1Location.getBlockX(), before1Location.getBlockY(), before1Location.getBlockZ()));
 
-        System.out.println(direction);
         //1ブロック先のブロックを取得
         Location after1BlockLocation = vehicleLocation.clone();
         if(direction == 1){

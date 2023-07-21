@@ -73,16 +73,17 @@ public class Listener_Select implements Listener {
         }
 
         //ポジションリストに登録されていない場合、登録
-        if(!BossBarTrainAnnounce.selectPosition.containsKey(player)){
+        if(!BossBarTrainAnnounce.selectPosition.containsKey(uuid)){
             BossBarTrainAnnounce.selectPosition.put(uuid, new SelectPositionModel());
         }
 
         //ポジションを記録
-        SelectPositionModel oldSelectPosition = BossBarTrainAnnounce.selectPosition.get(player);
+        SelectPositionModel oldSelectPosition = BossBarTrainAnnounce.selectPosition.get(uuid);
         SelectPositionModel newSelectPosition = new SelectPositionModel();
 
         //同じ位置を選択した場合、何もしない
-        if(hand == 0){
+        if(oldSelectPosition == null) {
+        }else if(hand == 0){
             if(oldSelectPosition.getWorldName().equalsIgnoreCase(event.getClickedBlock().getWorld().toString()) && oldSelectPosition.getPos1X() == event.getClickedBlock().getX() &&oldSelectPosition.getPos1Y() == event.getClickedBlock().getY() && oldSelectPosition.getPos1Z() == event.getClickedBlock().getZ()){
                 return;
             }
@@ -101,11 +102,13 @@ public class Listener_Select implements Listener {
             newSelectPosition.setSelectPos1(true);
 
             //既に選択しているpos2のワールドと同一の場合、選択を保持
-            if(oldSelectPosition.isSelectPos2() && event.getClickedBlock().getWorld().getName().equalsIgnoreCase(oldSelectPosition.getWorldName())){
-                newSelectPosition.setPos2X(oldSelectPosition.getPos2X());
-                newSelectPosition.setPos2Y(oldSelectPosition.getPos2Y());
-                newSelectPosition.setPos2Z(oldSelectPosition.getPos2Z());
-                newSelectPosition.setSelectPos2(true);
+            if(oldSelectPosition != null) {
+                if (oldSelectPosition.isSelectPos2() && event.getClickedBlock().getWorld().getName().equalsIgnoreCase(oldSelectPosition.getWorldName())) {
+                    newSelectPosition.setPos2X(oldSelectPosition.getPos2X());
+                    newSelectPosition.setPos2Y(oldSelectPosition.getPos2Y());
+                    newSelectPosition.setPos2Z(oldSelectPosition.getPos2Z());
+                    newSelectPosition.setSelectPos2(true);
+                }
             }
 
         }else{
@@ -116,11 +119,13 @@ public class Listener_Select implements Listener {
             newSelectPosition.setSelectPos2(true);
 
             //既に選択しているpos1のワールドと同一の場合、選択を保持
-            if(oldSelectPosition.isSelectPos1() && event.getClickedBlock().getWorld().getName().equalsIgnoreCase(oldSelectPosition.getWorldName())){
-                newSelectPosition.setPos1X(oldSelectPosition.getPos1X());
-                newSelectPosition.setPos1Y(oldSelectPosition.getPos1Y());
-                newSelectPosition.setPos1Z(oldSelectPosition.getPos1Z());
-                newSelectPosition.setSelectPos1(true);
+            if(oldSelectPosition != null) {
+                if (oldSelectPosition.isSelectPos1() && event.getClickedBlock().getWorld().getName().equalsIgnoreCase(oldSelectPosition.getWorldName())) {
+                    newSelectPosition.setPos1X(oldSelectPosition.getPos1X());
+                    newSelectPosition.setPos1Y(oldSelectPosition.getPos1Y());
+                    newSelectPosition.setPos1Z(oldSelectPosition.getPos1Z());
+                    newSelectPosition.setSelectPos1(true);
+                }
             }
         }
 
@@ -157,6 +162,7 @@ public class Listener_Select implements Listener {
 
         CheckUtil checkUtil = new CheckUtil();
         Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
         Block block = event.getBlock();
 
         //権限チェック
@@ -168,11 +174,11 @@ public class Listener_Select implements Listener {
             return;
         }
         //ポジションを選択しているか
-        if(!BossBarTrainAnnounce.selectPosition.containsKey(player)){
+        if(!BossBarTrainAnnounce.selectPosition.containsKey(uuid)){
             return;
         }
         //選択したポジションが壊れたブロックと同一か
-        SelectPositionModel selectPositionModel = BossBarTrainAnnounce.selectPosition.get(player);
+        SelectPositionModel selectPositionModel = BossBarTrainAnnounce.selectPosition.get(uuid);
         if(!checkUtil.checkSameLocation(block.getLocation(), new Location(Bukkit.getWorld(selectPositionModel.getWorldName()), selectPositionModel.getPos1X(), selectPositionModel.getPos1Y(), selectPositionModel.getPos1Z()))){
             return;
         }
